@@ -1,0 +1,217 @@
+.page {
+  min-height: calc(100vh - 56px);
+  padding: 20px 24px 24px;
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 1600px;
+  min-height: calc(100vh - 100px);
+  margin-inline: auto;
+}
+
+.queueHeader {
+  display: flex;
+  flex: 0 0 56px;
+  align-items: center;
+  justify-content: space-between;
+  min-width: 0;
+}
+
+.title {
+  margin: 0;
+  white-space: nowrap;
+}
+
+.headerMeta {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+  color: var(--color-text-secondary);
+}
+
+.workload,
+.updatedAt {
+  font-size: var(--font-size-sm);
+  line-height: 20px;
+  white-space: nowrap;
+}
+
+.workload {
+  margin: 0;
+}
+
+.refreshStatus {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-inline-start: var(--space-5);
+  padding-inline-start: var(--space-5);
+  border-inline-start: var(--border-width-default) solid
+    var(--color-border-subtle);
+}
+
+.updatedAt {
+  color: var(--color-text-muted);
+}
+
+.iconButton,
+.filterButton,
+.paginationButton {
+  border: var(--border-width-default) solid var(--color-border-default);
+  border-radius: var(--radius-sm);
+  background: var(--color-bg-surface);
+  color: var(--color-text-secondary);
+  font-weight: var(--font-weight-medium);
+  cursor: pointer;
+  transition:
+    border-color 120ms ease,
+    background-color 120ms ease,
+    color 120ms ease;
+}
+
+.iconButton:hover,
+.filterButton:hover,
+.paginationButton:hover {
+  border-color: var(--color-border-strong);
+  background: var(--color-bg-surface-subtle);
+  color: var(--color-text-primary);
+}
+
+.iconButton:active,
+.filterButton:active,
+.paginationButton:active {
+  background: var(--color-border-subtle);
+}
+
+.iconButton {
+  display: grid;
+  width: 32px;
+  height: 32px;
+  padding: 6px;
+  place-items: center;
+}
+
+.iconButton svg {
+  width: 18px;
+  height: 18px;
+  fill: currentcolor;
+}
+
+.toolbar {
+  display: flex;
+  flex: 0 0 52px;
+  flex-wrap: nowrap;
+  align-items: center;
+  gap: var(--space-2);
+  height: 52px;
+  margin-block-start: 16px;
+  padding: var(--space-2);
+  overflow-x: auto;
+  border: var(--border-width-default) solid var(--color-border-subtle);
+  border-radius: var(--radius-md);
+  background: var(--material-surface-opaque);
+  box-shadow: var(--shadow-subtle);
+}
+
+.searchField {
+  position: relative;
+  flex: 0 1 320px;
+  min-width: 220px;
+  max-width: 360px;
+}
+
+.searchField svg {
+  position: absolute;
+  top: 50%;
+  left: 10px;
+  width: 18px;
+  height: 18px;
+  fill: var(--color-text-muted);
+  pointer-events: none;
+  transform: translateY(-50%);
+}
+
+.searchInput {
+  width: 100%;
+  height: 34px;
+  padding: 0 var(--space-3) 0 36px;
+  border: var(--border-width-default) solid var(--color-border-default);
+  border-radius: var(--radius-sm);
+  background: var(--color-bg-surface-subtle);
+  color: var(--color-text-primary);
+  font-size: var(--font-size-sm);
+  line-height: 20px;
+}
+
+.searchInput::placeholder {
+  color: var(--color-text-muted);
+  opacity: 1;
+}
+
+.searchInput:hover {
+  border-color: var(--color-border-strong);
+}
+
+.filterButton {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-1);
+  height: 34px;
+  padding-inline: var(--space-3);
+  font-size: var(--font-size-sm);
+  line-height: 20px;
+  white-space: nowrap;
+}
+
+.filterButton svg {
+  width: 14px;
+  height: 14px;
+  fill: currentcolor;
+}
+
+.tableFrame {
+  flex: 1 1 auto;
+  min-height: 0;
+  margin-block-start: 8px;
+  border: var(--border-width-default) solid var(--color-border-subtle);
+  border-radius: var(--radius-md);
+  background: var(--material-surface-opaque);
+  box-shadow: var(--shadow-subtle);
+}
+
+.pagination {
+  display: flex;
+  flex: 0 0 44px;
+  align-items: center;
+  justify-content: space-between;
+  height: 44px;
+  margin-block-start: 12px;
+  padding-inline: var(--space-3);
+  border: var(--border-width-default) solid var(--color-border-subtle);
+  border-radius: var(--radius-md);
+  background: var(--material-surface-opaque);
+}
+
+.pageRange {
+  margin: 0;
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-sm);
+  line-height: 20px;
+}
+
+.paginationControls {
+  display: flex;
+  gap: var(--space-2);
+}
+
+.paginationButton {
+  height: 30px;
+  padding-inline: var(--space-3);
+  font-size: var(--font-size-sm);
+  line-height: 20px;
+}
