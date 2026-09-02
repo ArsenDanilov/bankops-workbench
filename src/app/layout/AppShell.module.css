@@ -1,0 +1,19 @@
+.shell {
+  min-height: 100vh;
+  background: var(--color-bg-app);
+}
+
+.header {
+  padding: var(--space-4) var(--space-6);
+  border-bottom: var(--border-width-default) solid var(--color-border-subtle);
+  background: var(--material-surface-opaque);
+  box-shadow: var(--shadow-subtle);
+  color: var(--color-text-primary);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: 0.01em;
+}
+
+.main {
+  padding: var(--space-8);
+}
