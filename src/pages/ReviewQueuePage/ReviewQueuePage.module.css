@@ -101,6 +101,9 @@
 }
 
 .toolbar {
+  position: sticky;
+  z-index: 20;
+  top: 56px;
   display: flex;
   flex: 0 0 52px;
   flex-wrap: nowrap;
@@ -174,14 +177,13 @@
   fill: currentcolor;
 }
 
-.tableFrame {
-  flex: 1 1 auto;
-  min-height: 0;
-  margin-block-start: 8px;
-  border: var(--border-width-default) solid var(--color-border-subtle);
-  border-radius: var(--radius-md);
-  background: var(--material-surface-opaque);
-  box-shadow: var(--shadow-subtle);
+.toolbarSeparator {
+  position: sticky;
+  z-index: 19;
+  top: 108px;
+  flex: 0 0 8px;
+  height: 8px;
+  background: var(--color-bg-app);
 }
 
 .pagination {

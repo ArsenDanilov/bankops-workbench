@@ -1,0 +1,91 @@
+.tableRegion {
+  flex: 1 0 auto;
+  border: var(--border-width-default) solid var(--color-border-subtle);
+  border-radius: var(--radius-lg);
+  background: var(--color-bg-surface);
+  box-shadow: none;
+}
+
+.table {
+  width: 100%;
+  table-layout: fixed;
+  border-spacing: 0;
+  border-collapse: separate;
+  color: var(--color-text-primary);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  line-height: 18px;
+}
+
+.slaColumn {
+  width: 128px;
+}
+
+.caseColumn {
+  width: 224px;
+}
+
+.amountColumn {
+  width: 128px;
+}
+
+.clientColumn,
+.recipientColumn {
+  width: 180px;
+}
+
+.scoreColumn {
+  width: 72px;
+}
+
+.headerCell {
+  position: sticky;
+  z-index: 18;
+  top: 116px;
+  height: 40px;
+  padding: 0 var(--space-3);
+  border-bottom: var(--border-width-default) solid var(--color-border-default);
+  background: var(--color-bg-surface-subtle);
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  line-height: 16px;
+  text-align: left;
+  white-space: nowrap;
+}
+
+.headerCell:first-child {
+  border-start-start-radius: calc(var(--radius-lg) - 1px);
+}
+
+.headerCell:last-child {
+  border-start-end-radius: calc(var(--radius-lg) - 1px);
+}
+
+.bodyRow {
+  height: 60px;
+  background: var(--color-bg-surface);
+}
+
+.bodyCell {
+  height: 60px;
+  padding: 0 var(--space-3);
+  border-bottom: var(--border-width-default) solid var(--color-border-subtle);
+  background: var(--color-bg-surface);
+  text-align: left;
+}
+
+.numericCell {
+  text-align: right;
+}
+
+.visuallyHidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}

@@ -1,8 +1,8 @@
 import { QueuePagination } from './QueuePagination';
-import { QueueTableFrame } from './QueueTableFrame';
 import { QueueToolbar } from './QueueToolbar';
 import { ReviewQueueHeader } from './ReviewQueueHeader';
 import styles from './ReviewQueuePage.module.css';
+import { ReviewQueueTable } from './ReviewQueueTable';
 
 export const ReviewQueuePage = () => {
   return (
@@ -10,7 +10,8 @@ export const ReviewQueuePage = () => {
       <div className={styles.content}>
         <ReviewQueueHeader />
         <QueueToolbar />
-        <QueueTableFrame />
+        <div className={styles.toolbarSeparator} aria-hidden="true" />
+        <ReviewQueueTable />
         <QueuePagination />
       </div>
     </div>
