@@ -1,8 +1,18 @@
+import { QueuePagination } from './QueuePagination';
+import { QueueTableFrame } from './QueueTableFrame';
+import { QueueToolbar } from './QueueToolbar';
+import { ReviewQueueHeader } from './ReviewQueueHeader';
+import styles from './ReviewQueuePage.module.css';
+
 export const ReviewQueuePage = () => {
   return (
-    <section>
-      <h1>Review Queue</h1>
-      <p>The review queue will be implemented in a later milestone.</p>
-    </section>
+    <div className={styles.page}>
+      <div className={styles.content}>
+        <ReviewQueueHeader />
+        <QueueToolbar />
+        <QueueTableFrame />
+        <QueuePagination />
+      </div>
+    </div>
   );
 };

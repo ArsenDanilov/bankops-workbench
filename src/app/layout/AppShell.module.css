@@ -4,7 +4,10 @@
 }
 
 .header {
-  padding: var(--space-4) var(--space-6);
+  display: flex;
+  align-items: center;
+  height: 56px;
+  padding-inline: var(--space-6);
   border-bottom: var(--border-width-default) solid var(--color-border-subtle);
   background: var(--material-surface-opaque);
   box-shadow: var(--shadow-subtle);
@@ -15,5 +18,5 @@
 }
 
 .main {
-  padding: var(--space-8);
+  min-width: 0;
 }
