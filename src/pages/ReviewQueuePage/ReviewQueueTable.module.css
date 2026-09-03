@@ -18,7 +18,7 @@
 }
 
 .slaColumn {
-  width: 128px;
+  width: 144px;
 }
 
 .caseColumn {
@@ -73,10 +73,248 @@
   border-bottom: var(--border-width-default) solid var(--color-border-subtle);
   background: var(--color-bg-surface);
   text-align: left;
+  vertical-align: middle;
 }
 
 .numericCell {
   text-align: right;
+}
+
+.slaIndicator {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-width: 0;
+  font-variant-numeric: tabular-nums;
+}
+
+.slaDueSoon,
+.slaBreached {
+  padding-inline-start: 10px;
+}
+
+.slaDueSoon::before,
+.slaBreached::before {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 2px;
+  height: 36px;
+  border-radius: 1px;
+  content: '';
+  transform: translateY(-50%);
+}
+
+.slaDueSoon::before {
+  background: var(--color-status-warning);
+}
+
+.slaBreached::before {
+  background: var(--color-status-danger);
+}
+
+.slaPrimary {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  color: var(--color-text-primary);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  line-height: 18px;
+  white-space: nowrap;
+}
+
+.slaPrimary svg {
+  flex: 0 0 auto;
+  width: 14px;
+  height: 14px;
+  fill: none;
+  stroke: currentcolor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.4;
+}
+
+.slaDueSoon .slaPrimary {
+  color: var(--color-status-warning);
+}
+
+.slaBreached .slaPrimary {
+  color: var(--color-status-danger);
+}
+
+.slaSecondary {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-regular);
+  line-height: 16px;
+  white-space: nowrap;
+}
+
+.caseCell {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  justify-content: center;
+  gap: 2px;
+}
+
+.caseStateLine {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+.lifecycle {
+  flex: 0 0 auto;
+  padding-inline: 6px;
+  border: var(--border-width-default) solid var(--color-border-subtle);
+  border-radius: 6px;
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  line-height: 16px;
+  white-space: nowrap;
+}
+
+.lifecycleQueued {
+  background: var(--color-bg-surface-subtle);
+  color: var(--color-text-secondary);
+}
+
+.lifecycleInReview {
+  border-color: var(--color-accent-border);
+  background: var(--color-accent-subtle);
+  color: var(--color-accent);
+}
+
+.ownership {
+  display: inline-flex;
+  min-width: 0;
+  align-items: center;
+  gap: var(--space-1);
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+  line-height: 16px;
+  white-space: nowrap;
+}
+
+.ownershipMarker {
+  flex: 0 0 auto;
+  width: 8px;
+  height: 8px;
+  border: var(--border-width-default) solid var(--color-border-strong);
+  border-radius: 50%;
+}
+
+.ownershipYou {
+  color: var(--color-accent);
+  font-weight: var(--font-weight-semibold);
+}
+
+.ownershipYou .ownershipMarker {
+  width: 7px;
+  height: 7px;
+  border-color: var(--color-accent);
+  background: var(--color-accent);
+}
+
+.ownershipAvailable {
+  color: var(--color-text-secondary);
+}
+
+.ownershipAnotherAnalyst .ownershipMarker {
+  border-radius: 2px;
+  background: var(--color-border-strong);
+}
+
+.caseMetadata {
+  min-width: 0;
+  overflow: hidden;
+  color: var(--color-text-muted);
+  font-size: 11px;
+  font-weight: var(--font-weight-regular);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
+  line-height: 16px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.amount {
+  color: var(--color-text-primary);
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-semibold);
+  font-variant-numeric: tabular-nums;
+  line-height: 20px;
+  white-space: nowrap;
+}
+
+.nameCell {
+  overflow: hidden;
+}
+
+.nameText {
+  display: block;
+  min-width: 0;
+  overflow: hidden;
+  color: var(--color-text-primary);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  line-height: 18px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.riskSummary {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: 6px;
+  color: var(--color-evidence-fraud);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  line-height: 18px;
+  white-space: nowrap;
+}
+
+.riskMarker {
+  flex: 0 0 auto;
+  width: 2px;
+  height: 16px;
+  border-radius: 1px;
+  background: var(--color-evidence-fraud);
+}
+
+.firstSignal,
+.signalSeparator,
+.signalOverflow {
+  flex: 0 0 auto;
+}
+
+.secondSignal {
+  min-width: 0;
+  flex: 0 1 auto;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.signalOverflow {
+  margin-inline-start: auto;
+  font-weight: var(--font-weight-semibold);
+  font-variant-numeric: tabular-nums;
+}
+
+.score {
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  font-variant-numeric: tabular-nums;
+  line-height: 18px;
+  white-space: nowrap;
 }
 
 .visuallyHidden {

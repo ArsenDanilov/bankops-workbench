@@ -18,6 +18,10 @@
   --color-accent: #28518f;
   --color-accent-hover: #214477;
   --color-accent-active: #19365f;
+  --color-accent-subtle: #eef4fc;
+  --color-accent-border: #bfd0e8;
+
+  --color-evidence-fraud: #6654b5;
 
   --color-status-danger: #b42318;
   --color-status-warning: #946200;
