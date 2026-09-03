@@ -67,6 +67,19 @@
   background: var(--color-bg-surface);
 }
 
+.emptyRow {
+  height: 120px;
+}
+
+.emptyCell {
+  height: 120px;
+  padding: 0 var(--space-3);
+  color: var(--color-text-secondary);
+  font-weight: var(--font-weight-regular);
+  text-align: center;
+  vertical-align: middle;
+}
+
 .bodyCell {
   height: 60px;
   padding: 0 var(--space-3);

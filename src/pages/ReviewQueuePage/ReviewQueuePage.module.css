@@ -59,6 +59,7 @@
 
 .iconButton,
 .filterButton,
+.resetButton,
 .paginationButton {
   border: var(--border-width-default) solid var(--color-border-default);
   border-radius: var(--radius-sm);
@@ -74,6 +75,7 @@
 
 .iconButton:hover,
 .filterButton:hover,
+.resetButton:hover,
 .paginationButton:hover {
   border-color: var(--color-border-strong);
   background: var(--color-bg-surface-subtle);
@@ -82,6 +84,7 @@
 
 .iconButton:active,
 .filterButton:active,
+.resetButton:active,
 .paginationButton:active {
   background: var(--color-border-subtle);
 }
@@ -112,7 +115,7 @@
   height: 52px;
   margin-block-start: 16px;
   padding: var(--space-2);
-  overflow-x: auto;
+  overflow: visible;
   border: var(--border-width-default) solid var(--color-border-subtle);
   border-radius: var(--radius-md);
   background: var(--material-surface-opaque);
@@ -122,7 +125,7 @@
 .searchField {
   position: relative;
   flex: 0 1 320px;
-  min-width: 220px;
+  min-width: 280px;
   max-width: 360px;
 }
 
@@ -139,7 +142,7 @@
 
 .searchInput {
   width: 100%;
-  height: 34px;
+  height: 36px;
   padding: 0 var(--space-3) 0 36px;
   border: var(--border-width-default) solid var(--color-border-default);
   border-radius: var(--radius-sm);
@@ -164,17 +167,97 @@
   align-items: center;
   justify-content: center;
   gap: var(--space-1);
-  height: 34px;
+  height: 36px;
   padding-inline: var(--space-3);
   font-size: var(--font-size-sm);
   line-height: 20px;
   white-space: nowrap;
 }
 
+.filterButtonActive {
+  border-color: var(--color-accent-border);
+  background: var(--color-accent-subtle);
+  color: var(--color-accent);
+}
+
+.filterButtonActive:hover {
+  border-color: var(--color-accent);
+  background: var(--color-accent-subtle);
+  color: var(--color-accent-hover);
+}
+
 .filterButton svg {
   width: 14px;
   height: 14px;
   fill: currentcolor;
+}
+
+.riskFilter {
+  position: relative;
+  flex: 0 0 auto;
+}
+
+.riskFilter .filterButton {
+  width: 118px;
+}
+
+.riskFilter svg {
+  transition: transform 120ms ease;
+}
+
+.riskChevronOpen {
+  transform: rotate(180deg);
+}
+
+.riskPanel {
+  position: absolute;
+  z-index: 30;
+  top: calc(100% + var(--space-2));
+  right: 0;
+  display: grid;
+  min-width: 208px;
+  padding: var(--space-2);
+  border: var(--border-width-default) solid var(--color-border-default);
+  border-radius: var(--radius-md);
+  background: var(--material-surface-raised);
+  box-shadow: var(--shadow-raised);
+}
+
+.riskOption {
+  display: flex;
+  min-height: 32px;
+  align-items: center;
+  gap: var(--space-2);
+  padding-inline: var(--space-2);
+  border-radius: var(--radius-sm);
+  color: var(--color-text-primary);
+  cursor: pointer;
+  font-size: var(--font-size-sm);
+  line-height: 20px;
+  white-space: nowrap;
+}
+
+.riskOption:hover {
+  background: var(--color-bg-surface-subtle);
+}
+
+.riskOption input {
+  width: 16px;
+  height: 16px;
+  margin: 0;
+  accent-color: var(--color-accent);
+}
+
+.resetButton {
+  flex: 0 0 auto;
+  height: 36px;
+  padding-inline: var(--space-2);
+  border-color: transparent;
+  background: transparent;
+  color: var(--color-accent);
+  font-size: var(--font-size-sm);
+  line-height: 20px;
+  white-space: nowrap;
 }
 
 .toolbarSeparator {
@@ -216,4 +299,19 @@
   padding-inline: var(--space-3);
   font-size: var(--font-size-sm);
   line-height: 20px;
+}
+
+.paginationButton:disabled {
+  border-color: var(--color-border-subtle);
+  background: var(--color-bg-surface-subtle);
+  color: var(--color-text-muted);
+  cursor: not-allowed;
+  opacity: 0.72;
+}
+
+.paginationButton:disabled:hover,
+.paginationButton:disabled:active {
+  border-color: var(--color-border-subtle);
+  background: var(--color-bg-surface-subtle);
+  color: var(--color-text-muted);
 }
