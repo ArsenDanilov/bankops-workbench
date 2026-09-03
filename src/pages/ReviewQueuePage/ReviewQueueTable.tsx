@@ -1,6 +1,6 @@
 import styles from './ReviewQueueTable.module.css';
-
-const STRUCTURAL_ROW_COUNT = 9;
+import { reviewQueueFixtures } from './model/reviewQueue.fixtures';
+import { ReviewQueueRow } from './ReviewQueueRow';
 
 export const ReviewQueueTable = () => {
   return (
@@ -51,17 +51,9 @@ export const ReviewQueueTable = () => {
           </tr>
         </thead>
 
-        <tbody aria-hidden="true">
-          {Array.from({ length: STRUCTURAL_ROW_COUNT }, (_, rowIndex) => (
-            <tr key={rowIndex} className={styles.bodyRow}>
-              <td className={styles.bodyCell} />
-              <td className={styles.bodyCell} />
-              <td className={`${styles.bodyCell} ${styles.numericCell}`} />
-              <td className={styles.bodyCell} />
-              <td className={styles.bodyCell} />
-              <td className={styles.bodyCell} />
-              <td className={`${styles.bodyCell} ${styles.numericCell}`} />
-            </tr>
+        <tbody>
+          {reviewQueueFixtures.map((item) => (
+            <ReviewQueueRow key={item.caseId} item={item} />
           ))}
         </tbody>
       </table>
