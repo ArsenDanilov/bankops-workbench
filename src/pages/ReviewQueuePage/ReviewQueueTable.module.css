@@ -67,6 +67,35 @@
   background: var(--color-bg-surface);
 }
 
+.bodyRow .bodyCell {
+  transition: background-color 120ms ease;
+}
+
+.bodyRow:hover .bodyCell {
+  background: var(--color-bg-surface-subtle);
+}
+
+.bodyRow:focus-within .bodyCell {
+  background: color-mix(
+    in srgb,
+    var(--color-accent-subtle) 64%,
+    var(--color-bg-surface)
+  );
+}
+
+.highlightedRow .bodyCell {
+  background: var(--color-accent-subtle);
+}
+
+.highlightedRow:hover .bodyCell,
+.highlightedRow:focus-within .bodyCell {
+  background: color-mix(
+    in srgb,
+    var(--color-accent-subtle) 80%,
+    var(--color-bg-surface-subtle)
+  );
+}
+
 .emptyRow {
   height: 120px;
 }
@@ -256,6 +285,10 @@
   white-space: nowrap;
 }
 
+.caseIdentifier {
+  color: inherit;
+}
+
 .amount {
   color: var(--color-text-primary);
   font-size: var(--font-size-md);
@@ -302,8 +335,7 @@
 }
 
 .firstSignal,
-.signalSeparator,
-.signalOverflow {
+.signalSeparator {
   flex: 0 0 auto;
 }
 
@@ -315,10 +347,111 @@
   white-space: nowrap;
 }
 
-.signalOverflow {
+.riskDisclosure {
+  position: relative;
+  flex: 0 0 auto;
   margin-inline-start: auto;
+}
+
+.signalOverflow {
+  display: inline-flex;
+  min-width: 24px;
+  height: 24px;
+  align-items: center;
+  justify-content: center;
+  padding: 0 var(--space-1);
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  font: inherit;
   font-weight: var(--font-weight-semibold);
   font-variant-numeric: tabular-nums;
+}
+
+.signalOverflow:hover,
+.signalOverflow[aria-expanded='true'] {
+  background: var(--color-accent-subtle);
+  color: var(--color-accent);
+}
+
+.riskPopoverCellOpen {
+  position: relative;
+  z-index: 10;
+}
+
+.riskPopover {
+  position: absolute;
+  z-index: 40;
+  top: calc(100% + 6px);
+  right: 0;
+  width: max-content;
+  min-width: 176px;
+  max-width: 224px;
+  padding: var(--space-2);
+  border: var(--border-width-default) solid var(--color-border-default);
+  border-radius: var(--radius-md);
+  background: var(--material-surface-raised);
+  box-shadow: var(--shadow-raised);
+  color: var(--color-text-primary);
+}
+
+.riskPopoverList {
+  display: grid;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-regular);
+  line-height: 18px;
+}
+
+.skeletonRow {
+  height: 60px;
+}
+
+.skeletonBlock {
+  display: inline-block;
+  height: 10px;
+  border-radius: var(--radius-sm);
+  background: var(--color-border-subtle);
+}
+
+.skeletonSla {
+  width: 84px;
+}
+
+.skeletonCasePrimary,
+.skeletonCaseSecondary {
+  display: block;
+}
+
+.skeletonCasePrimary {
+  width: 112px;
+  margin-block-end: 7px;
+}
+
+.skeletonCaseSecondary {
+  width: 176px;
+  height: 8px;
+}
+
+.skeletonAmount {
+  width: 72px;
+}
+
+.skeletonName {
+  width: 124px;
+}
+
+.skeletonRisk {
+  width: min(240px, 72%);
+}
+
+.skeletonScore {
+  width: 24px;
 }
 
 .score {

@@ -1,7 +1,11 @@
-import { useEffect } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useReviewQueueSearchParams } from './hooks/useReviewQueueSearchParams';
 import { filterReviewQueueItems } from './lib/filterReviewQueueItems';
-import { reviewQueueFixtures } from './model/reviewQueue.fixtures';
+import { sortReviewQueueItemsByOperationalOrder } from './lib/sortReviewQueueItems';
+import {
+  incomingReviewQueueFixture,
+  reviewQueueFixtures,
+} from './model/reviewQueue.fixtures';
 import { REVIEW_QUEUE_PAGE_SIZE } from './model/reviewQueueSearchParams.types';
 import { QueuePagination } from './QueuePagination';
 import { QueueToolbar } from './QueueToolbar';
@@ -10,6 +14,11 @@ import styles from './ReviewQueuePage.module.css';
 import { ReviewQueueTable } from './ReviewQueueTable';
 
 export const ReviewQueuePage = () => {
+  const [isIncomingCasePending, setIsIncomingCasePending] = useState(true);
+  const [highlightedCaseId, setHighlightedCaseId] = useState<string | null>(
+    null,
+  );
+  const highlightTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const {
     state,
     pageParamNeedsNormalization,
@@ -21,7 +30,13 @@ export const ReviewQueuePage = () => {
     setPage,
     reset,
   } = useReviewQueueSearchParams();
-  const filteredItems = filterReviewQueueItems(reviewQueueFixtures, state);
+  const incorporatedItems = isIncomingCasePending
+    ? reviewQueueFixtures
+    : sortReviewQueueItemsByOperationalOrder([
+        ...reviewQueueFixtures,
+        incomingReviewQueueFixture,
+      ]);
+  const filteredItems = filterReviewQueueItems(incorporatedItems, state);
   const pageCount = Math.max(
     1,
     Math.ceil(filteredItems.length / REVIEW_QUEUE_PAGE_SIZE),
@@ -39,6 +54,33 @@ export const ReviewQueuePage = () => {
     }
   }, [currentPage, pageParamNeedsNormalization, setPage, state.page]);
 
+  useEffect(
+    () => () => {
+      if (highlightTimerRef.current !== null) {
+        clearTimeout(highlightTimerRef.current);
+      }
+    },
+    [],
+  );
+
+  const incorporateIncomingCase = () => {
+    if (!isIncomingCasePending) {
+      return;
+    }
+
+    setIsIncomingCasePending(false);
+    setHighlightedCaseId(incomingReviewQueueFixture.caseId);
+
+    if (highlightTimerRef.current !== null) {
+      clearTimeout(highlightTimerRef.current);
+    }
+
+    highlightTimerRef.current = setTimeout(() => {
+      setHighlightedCaseId(null);
+      highlightTimerRef.current = null;
+    }, 1800);
+  };
+
   return (
     <div className={styles.page}>
       <div className={styles.content}>
@@ -51,9 +93,14 @@ export const ReviewQueuePage = () => {
           onSlaBreachedToggle={toggleSlaBreached}
           onRiskSignalToggle={toggleRiskSignal}
           onReset={reset}
+          hasPendingIncomingCase={isIncomingCasePending}
+          onIncorporateIncomingCase={incorporateIncomingCase}
         />
         <div className={styles.toolbarSeparator} aria-hidden="true" />
-        <ReviewQueueTable items={currentItems} />
+        <ReviewQueueTable
+          items={currentItems}
+          highlightedCaseId={highlightedCaseId}
+        />
         <QueuePagination
           currentPage={currentPage}
           totalItems={filteredItems.length}

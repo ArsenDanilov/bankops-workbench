@@ -7,11 +7,23 @@ import styles from './ReviewQueueTable.module.css';
 
 interface ReviewQueueRowProps {
   item: ReviewQueueItem;
+  isHighlighted: boolean;
+  isRiskPopoverOpen: boolean;
+  onRiskPopoverToggle: () => void;
+  onRiskPopoverClose: () => void;
 }
 
-export const ReviewQueueRow = ({ item }: ReviewQueueRowProps) => {
+export const ReviewQueueRow = ({
+  item,
+  isHighlighted,
+  isRiskPopoverOpen,
+  onRiskPopoverToggle,
+  onRiskPopoverClose,
+}: ReviewQueueRowProps) => {
   return (
-    <tr className={styles.bodyRow}>
+    <tr
+      className={`${styles.bodyRow} ${isHighlighted ? styles.highlightedRow : ''}`}
+    >
       <td className={styles.bodyCell}>
         <SlaIndicator item={item} />
       </td>
@@ -29,8 +41,16 @@ export const ReviewQueueRow = ({ item }: ReviewQueueRowProps) => {
       <td className={`${styles.bodyCell} ${styles.nameCell}`}>
         <span className={styles.nameText}>{item.recipientName}</span>
       </td>
-      <td className={styles.bodyCell}>
-        <RiskSignalSummary signals={item.riskSignals} />
+      <td
+        className={`${styles.bodyCell} ${isRiskPopoverOpen ? styles.riskPopoverCellOpen : ''}`}
+      >
+        <RiskSignalSummary
+          caseId={item.caseId}
+          signals={item.riskSignals}
+          isOpen={isRiskPopoverOpen}
+          onToggle={onRiskPopoverToggle}
+          onClose={onRiskPopoverClose}
+        />
       </td>
       <td className={`${styles.bodyCell} ${styles.numericCell}`}>
         <span className={styles.score}>{item.riskScore}</span>
