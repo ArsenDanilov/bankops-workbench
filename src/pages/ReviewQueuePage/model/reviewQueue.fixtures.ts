@@ -158,3 +158,19 @@ export const reviewQueueFixtures = [
     riskSignals: ['high_velocity'],
   },
 ] satisfies readonly ReviewQueueItem[];
+
+export const incomingReviewQueueFixture = {
+  caseId: 'RC-260902-0241',
+  operationId: 'OP-260902-9179',
+  lifecycle: 'queued',
+  ownership: { status: 'available' },
+  createdAt: '2026-09-02T13:23:00',
+  dueAt: '2026-09-02T13:27:00',
+  slaState: 'due_soon',
+  amount: 128000,
+  currency: 'RUB',
+  clientName: 'Виктория Лазарева',
+  recipientName: 'Роман Ковалёв',
+  riskScore: 69,
+  riskSignals: ['new_recipient', 'high_velocity'],
+} satisfies ReviewQueueItem;

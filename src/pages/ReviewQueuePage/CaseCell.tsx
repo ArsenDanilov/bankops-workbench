@@ -49,7 +49,8 @@ export const CaseCell = ({ item }: CaseCellProps) => {
         </span>
       </div>
       <div className={styles.caseMetadata}>
-        {item.caseId} · {item.operationId} · {formatQueueTime(item.createdAt)}
+        <span className={styles.caseIdentifier}>{item.caseId}</span> ·{' '}
+        {item.operationId} · {formatQueueTime(item.createdAt)}
       </div>
     </div>
   );

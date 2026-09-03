@@ -1,14 +1,43 @@
+import { useCallback, useState } from 'react';
 import styles from './ReviewQueueTable.module.css';
 import type { ReviewQueueItem } from './model/reviewQueue.types';
 import { ReviewQueueRow } from './ReviewQueueRow';
+import { ReviewQueueTableSkeleton } from './ReviewQueueTableSkeleton';
+
+export type ReviewQueueTablePresentationState = 'ready' | 'loading';
 
 interface ReviewQueueTableProps {
   items: readonly ReviewQueueItem[];
+  highlightedCaseId?: string | null;
+  presentationState?: ReviewQueueTablePresentationState;
 }
 
-export const ReviewQueueTable = ({ items }: ReviewQueueTableProps) => {
+export const ReviewQueueTable = ({
+  items,
+  highlightedCaseId = null,
+  presentationState = 'ready',
+}: ReviewQueueTableProps) => {
+  const [openRiskPopoverCaseId, setOpenRiskPopoverCaseId] = useState<
+    string | null
+  >(null);
+  const isLoading = presentationState === 'loading';
+
+  const closeRiskPopover = useCallback(() => {
+    setOpenRiskPopoverCaseId(null);
+  }, []);
+
+  const toggleRiskPopover = useCallback((caseId: string) => {
+    setOpenRiskPopoverCaseId((currentCaseId) =>
+      currentCaseId === caseId ? null : caseId,
+    );
+  }, []);
+
   return (
-    <section className={styles.tableRegion} aria-label="Review queue results">
+    <section
+      className={styles.tableRegion}
+      aria-label="Review queue results"
+      aria-busy={isLoading}
+    >
       <table className={styles.table}>
         <colgroup>
           <col className={styles.slaColumn} />
@@ -55,10 +84,19 @@ export const ReviewQueueTable = ({ items }: ReviewQueueTableProps) => {
           </tr>
         </thead>
 
-        <tbody>
-          {items.length > 0 ? (
+        <tbody aria-hidden={isLoading || undefined}>
+          {isLoading ? (
+            <ReviewQueueTableSkeleton />
+          ) : items.length > 0 ? (
             items.map((item) => (
-              <ReviewQueueRow key={item.caseId} item={item} />
+              <ReviewQueueRow
+                key={item.caseId}
+                item={item}
+                isHighlighted={item.caseId === highlightedCaseId}
+                isRiskPopoverOpen={item.caseId === openRiskPopoverCaseId}
+                onRiskPopoverToggle={() => toggleRiskPopover(item.caseId)}
+                onRiskPopoverClose={closeRiskPopover}
+              />
             ))
           ) : (
             <tr className={styles.emptyRow}>

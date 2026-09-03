@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { reviewQueueRiskSignalOptions } from './lib/reviewQueueFormatters';
 import type { ReviewQueueRiskSignal } from './model/reviewQueue.types';
 import type {
@@ -15,6 +15,8 @@ interface QueueToolbarProps {
   onSlaBreachedToggle: () => void;
   onRiskSignalToggle: (riskSignal: ReviewQueueRiskSignal) => void;
   onReset: () => void;
+  hasPendingIncomingCase: boolean;
+  onIncorporateIncomingCase: () => void;
 }
 
 const filterButtonClassName = (isActive: boolean) =>
@@ -28,8 +30,11 @@ export const QueueToolbar = ({
   onSlaBreachedToggle,
   onRiskSignalToggle,
   onReset,
+  hasPendingIncomingCase,
+  onIncorporateIncomingCase,
 }: QueueToolbarProps) => {
   const [isRiskPanelOpen, setIsRiskPanelOpen] = useState(false);
+  const riskTriggerRef = useRef<HTMLButtonElement>(null);
   const riskPanelId = 'review-queue-risk-filter-panel';
 
   return (
@@ -95,6 +100,7 @@ export const QueueToolbar = ({
         <button
           className={filterButtonClassName(state.riskSignals.length > 0)}
           type="button"
+          ref={riskTriggerRef}
           aria-expanded={isRiskPanelOpen}
           aria-controls={riskPanelId}
           onClick={() => setIsRiskPanelOpen((isOpen) => !isOpen)}
@@ -138,6 +144,19 @@ export const QueueToolbar = ({
       {hasActiveQuery ? (
         <button className={styles.resetButton} type="button" onClick={onReset}>
           Reset
+        </button>
+      ) : null}
+
+      {hasPendingIncomingCase ? (
+        <button
+          className={styles.incomingUpdateButton}
+          type="button"
+          onClick={() => {
+            onIncorporateIncomingCase();
+            riskTriggerRef.current?.focus();
+          }}
+        >
+          1 new case
         </button>
       ) : null}
     </section>
