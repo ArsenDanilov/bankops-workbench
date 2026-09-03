@@ -4,6 +4,7 @@ import type {
   ReviewQueueLifecycle,
   ReviewQueueRiskSignal,
 } from '../model/reviewQueue.types';
+import { REVIEW_QUEUE_RISK_SIGNALS } from '../model/reviewQueue.types';
 
 const SLA_REFERENCE_MINUTES = 13 * 60 + 24;
 
@@ -23,13 +24,20 @@ const lifecycleLabels: Record<ReviewQueueLifecycle, string> = {
   in_review: 'In review',
 };
 
-const riskSignalLabels: Record<ReviewQueueRiskSignal, string> = {
+export const reviewQueueRiskSignalLabels: Record<
+  ReviewQueueRiskSignal,
+  string
+> = {
   unusual_amount: 'Unusual amount',
   new_recipient: 'New recipient',
   high_velocity: 'High velocity',
   device_change: 'Device change',
   unusual_location: 'Unusual location',
 };
+
+export const reviewQueueRiskSignalOptions = REVIEW_QUEUE_RISK_SIGNALS.map(
+  (value) => ({ value, label: reviewQueueRiskSignalLabels[value] }),
+);
 
 export const formatQueueTime = (timestamp: string) => timestamp.slice(11, 16);
 
@@ -42,7 +50,7 @@ export const formatLifecycle = (lifecycle: ReviewQueueLifecycle) =>
   lifecycleLabels[lifecycle];
 
 export const formatRiskSignal = (signal: ReviewQueueRiskSignal) =>
-  riskSignalLabels[signal];
+  reviewQueueRiskSignalLabels[signal];
 
 export const formatSlaPrimary = ({
   dueAt,
