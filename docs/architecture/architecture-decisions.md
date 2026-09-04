@@ -57,11 +57,36 @@ not part of the current baseline.
   required. Test code and configuration participate in TypeScript checking.
 - GitHub Actions runs a single Node 24 job for pushes and pull requests:
   `npm ci` → lint → typecheck → test → build. No deployment or coverage service.
-- M9 implementation requires human acceptance. M-AUTO2 — Codex SDK Orchestrator
-  is the recommended separately approved follow-up, not part of this application
-  architecture or an installed capability. M10 remains the async-data milestone.
-  E2E/final quality remains later backlog work.
+- M9 is human-accepted (recorded in its report). M-AUTO2 adds the separately
+  approved local workflow runner described below; it does not change application
+  architecture. M10 remains the async-data milestone; E2E/final quality remains
+  later backlog work.
 - Visible UI changes require browser self-review at the relevant specification's
   viewport, including console, keyboard, states and material fallbacks.
 - Every milestone ends with factual verification and a standardized
   [report](../reports/README.md), followed by human review.
+
+## Local milestone automation — M-AUTO2
+
+- Official `@openai/codex-sdk` TypeScript SDK, native Node 24 TypeScript execution
+  and Node type declarations. No custom App Server JSON-RPC client, agent/workflow
+  framework, backend, GUI or reviewer agent.
+- `automation/` is development-only. One explicit READY task becomes IN_PROGRESS;
+  one SDK thread implements it and handles up to three verification repairs via
+  repeated `Thread.run()`. No automatic backlog selection, crash resume or M10 run.
+- Independent existing npm quality scripts run in lint/typecheck/test/build order,
+  with captured results. Definitions cannot silently change during the run. Final
+  validation checks declared report presence, task identity and NEEDS_REVIEW;
+  report content quality and ACCEPTED remain human-owned.
+- Local supported Codex authentication is inherited, never copied into project
+  storage. The SDK workspace-write sandbox has no network/web search or elevation;
+  missing authority/authentication is a Human Gate. Independent quality commands
+  remain trusted host processes, not sandboxed by the SDK.
+- Read-only dry-run checks state/files/Git/scripts/runtime without invoking Codex.
+  Ignored `.bankops-agent/` holds a lock and redacted bounded diagnostics. This is
+  a local single-run helper, not a transactional scheduler/security boundary.
+- Node-environment fake-Agent tests share the existing test command without
+  changing M9 Queue tests or their jsdom configuration. A dedicated automation
+  TypeScript project is included in `tsc -b`; no automation ships to the browser.
+
+Operational prerequisites and recovery limits: [automation/README.md](../../automation/README.md).

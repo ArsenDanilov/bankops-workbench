@@ -105,3 +105,19 @@ Only implement the current milestone. Do not opportunistically implement future
 backlog work or refactor unrelated code unless needed to complete the milestone
 safely. Update durable documentation when approved decisions or implementation
 facts change; never rewrite approval history as if new decisions were preapproved.
+
+## Local automated milestones
+
+`npm run agent:run` uses the official Codex TypeScript SDK; see
+[runner instructions](automation/README.md). Only a human-prepared `READY` current
+task is executable. Above the first `##` heading, retain unique `Current milestone`,
+`Status` and `Report` fields; Report names the expected file in `docs/reports/`.
+Never select a task from the backlog or invoke the runner recursively.
+
+The runner sets IN_PROGRESS, then independently checks available quality scripts.
+It allows at most three scoped repairs in the same thread. Do not modify quality
+script definitions or automation code to bypass verification. Report Human Gates
+immediately in the structured outcome (`humanGate: true`, `status: BLOCKED`) and
+task/report; unavailable permissions/authentication also require human input.
+Finish at NEEDS_REVIEW or BLOCKED, never ACCEPTED. Task/report identity must remain
+unchanged. Runtime logs in `.bankops-agent/` are ignored; never print/store secrets.

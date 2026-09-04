@@ -2,10 +2,11 @@
 
 ## Status
 
-NEEDS_REVIEW
+PASS
 
-M9 implementation and autonomous verification are complete. Human acceptance is
-pending; M9 is not marked `ACCEPTED`.
+M9 implementation and autonomous verification are complete. Human review has
+explicitly marked M9 `ACCEPTED`, as confirmed in the approved M-AUTO2 assignment.
+M-AUTO2 is now separately approved; M9 implementation is unchanged.
 
 ## Goal
 
@@ -196,6 +197,7 @@ new application route or visual change. No SDK/orchestrator was implemented.
 
 ## Recommended next step
 
-Human acceptance of M9, followed by a separately approved
-**M-AUTO2 — Codex SDK Orchestrator** milestone. Do not begin M-AUTO2 automatically.
-M10 — Async Data Foundation remains separate and was not started.
+The original recommendation was human acceptance of M9, followed by a separately
+approved **M-AUTO2 — Codex SDK Orchestrator** milestone. Human acceptance and that
+separate approval are now recorded above. M10 — Async Data Foundation remains
+separate and was not started as part of M9.
