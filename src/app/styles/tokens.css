@@ -69,9 +69,13 @@
   --material-surface-opaque: var(--color-bg-surface);
   --material-surface-raised: var(--color-bg-surface-raised);
   --material-surface-subtle: var(--color-bg-surface-subtle);
-  --material-surface-translucent: rgb(255 255 255 / 94%);
-  --material-border: rgb(148 163 184 / 42%);
+  --material-shell-opaque: var(--color-bg-surface-subtle);
+  --material-shell-glass: rgb(248 250 252 / 82%);
+  --material-shell-border: rgb(28 39 51 / 8%);
+  --material-toolbar-opaque: var(--color-bg-surface);
+  --material-toolbar-glass: rgb(255 255 255 / 90%);
+  --material-toolbar-border: rgb(221 227 234 / 90%);
 
-  --focus-ring-width: 3px;
+  --focus-ring-width: 2px;
   --focus-ring-offset: 2px;
 }

@@ -1,5 +1,6 @@
 .tableRegion {
   flex: 1 0 auto;
+  overflow: visible;
   border: var(--border-width-default) solid var(--color-border-subtle);
   border-radius: var(--radius-lg);
   background: var(--color-bg-surface);
@@ -299,7 +300,20 @@
 }
 
 .nameCell {
-  overflow: hidden;
+  position: relative;
+  overflow: visible;
+}
+
+.nameCell:hover,
+.nameCell:focus-within {
+  z-index: 19;
+}
+
+.overflowTooltipText {
+  position: relative;
+  display: block;
+  min-width: 0;
+  border-radius: var(--radius-sm);
 }
 
 .nameText {
@@ -311,6 +325,26 @@
   font-weight: var(--font-weight-medium);
   line-height: 18px;
   text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.truncationTooltip {
+  position: absolute;
+  z-index: 1;
+  top: calc(100% + 6px);
+  left: 0;
+  width: max-content;
+  max-width: 320px;
+  padding: 6px var(--space-2);
+  border: var(--border-width-default) solid var(--color-border-default);
+  border-radius: var(--radius-sm);
+  background: var(--material-surface-raised);
+  box-shadow: var(--shadow-raised);
+  color: var(--color-text-primary);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-regular);
+  line-height: 18px;
+  pointer-events: none;
   white-space: nowrap;
 }
 
@@ -378,12 +412,12 @@
 
 .riskPopoverCellOpen {
   position: relative;
-  z-index: 10;
+  z-index: 19;
 }
 
 .riskPopover {
   position: absolute;
-  z-index: 40;
+  z-index: 1;
   top: calc(100% + 6px);
   right: 0;
   width: max-content;

@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { reviewQueueRiskSignalOptions } from './lib/reviewQueueFormatters';
 import type { ReviewQueueRiskSignal } from './model/reviewQueue.types';
 import type {
@@ -34,8 +34,28 @@ export const QueueToolbar = ({
   onIncorporateIncomingCase,
 }: QueueToolbarProps) => {
   const [isRiskPanelOpen, setIsRiskPanelOpen] = useState(false);
+  const riskFilterRef = useRef<HTMLDivElement>(null);
   const riskTriggerRef = useRef<HTMLButtonElement>(null);
   const riskPanelId = 'review-queue-risk-filter-panel';
+
+  useEffect(() => {
+    if (!isRiskPanelOpen) {
+      return undefined;
+    }
+
+    const closeOnOutsidePointer = (event: PointerEvent) => {
+      if (
+        event.target instanceof Node &&
+        !riskFilterRef.current?.contains(event.target)
+      ) {
+        setIsRiskPanelOpen(false);
+      }
+    };
+
+    document.addEventListener('pointerdown', closeOnOutsidePointer);
+    return () =>
+      document.removeEventListener('pointerdown', closeOnOutsidePointer);
+  }, [isRiskPanelOpen]);
 
   return (
     <section
@@ -44,19 +64,23 @@ export const QueueToolbar = ({
       onKeyDown={(event) => {
         if (event.key === 'Escape' && isRiskPanelOpen) {
           setIsRiskPanelOpen(false);
+          riskTriggerRef.current?.focus();
         }
       }}
     >
       <div className={styles.searchField}>
+        <label className={styles.visuallyHidden} htmlFor="review-queue-search">
+          Search review queue
+        </label>
         <svg aria-hidden="true" focusable="false" viewBox="0 0 20 20">
           <path d="M8.7 3.3a5.4 5.4 0 1 0 0 10.8 5.3 5.3 0 0 0 3.3-1.2l3.5 3.6 1-1-3.6-3.5a5.4 5.4 0 0 0-4.2-8.7Zm-4 5.4a4 4 0 1 1 8 0 4 4 0 0 1-8 0Z" />
         </svg>
         <input
           className={styles.searchInput}
+          id="review-queue-search"
           type="search"
           value={state.search}
           placeholder="Search case, operation, client, recipient"
-          aria-label="Search review queue"
           onChange={(event) => onSearchChange(event.target.value)}
         />
       </div>
@@ -96,7 +120,7 @@ export const QueueToolbar = ({
         SLA breached
       </button>
 
-      <div className={styles.riskFilter}>
+      <div className={styles.riskFilter} ref={riskFilterRef}>
         <button
           className={filterButtonClassName(state.riskSignals.length > 0)}
           type="button"
@@ -122,11 +146,10 @@ export const QueueToolbar = ({
         </button>
 
         {isRiskPanelOpen ? (
-          <div
-            className={styles.riskPanel}
-            id={riskPanelId}
-            aria-label="Risk signal filters"
-          >
+          <fieldset className={styles.riskPanel} id={riskPanelId}>
+            <legend className={styles.visuallyHidden}>
+              Risk signal filters
+            </legend>
             {reviewQueueRiskSignalOptions.map(({ value, label }) => (
               <label className={styles.riskOption} key={value}>
                 <input
@@ -137,7 +160,7 @@ export const QueueToolbar = ({
                 <span>{label}</span>
               </label>
             ))}
-          </div>
+          </fieldset>
         ) : null}
       </div>
 

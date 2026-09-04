@@ -57,6 +57,39 @@
   color: var(--color-text-muted);
 }
 
+.refreshControl {
+  position: relative;
+  display: inline-flex;
+}
+
+.refreshTooltip {
+  position: absolute;
+  z-index: 21;
+  right: 0;
+  bottom: calc(100% + var(--space-1));
+  width: max-content;
+  padding: var(--space-1) var(--space-2);
+  border: var(--border-width-default) solid var(--color-border-default);
+  border-radius: var(--radius-sm);
+  background: var(--material-surface-raised);
+  box-shadow: var(--shadow-subtle);
+  color: var(--color-text-primary);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-regular);
+  line-height: 18px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 120ms ease;
+  visibility: hidden;
+  white-space: nowrap;
+}
+
+.refreshControl:hover .refreshTooltip,
+.refreshControl:focus-within .refreshTooltip {
+  opacity: 1;
+  visibility: visible;
+}
+
 .iconButton,
 .filterButton,
 .resetButton,
@@ -119,10 +152,10 @@
   margin-block-start: 16px;
   padding: var(--space-2);
   overflow: visible;
-  border: var(--border-width-default) solid var(--color-border-subtle);
+  border: var(--border-width-default) solid var(--material-toolbar-border);
   border-radius: var(--radius-md);
-  background: var(--material-surface-opaque);
-  box-shadow: var(--shadow-subtle);
+  background: var(--material-toolbar-opaque);
+  box-shadow: 0 6px 18px rgb(15 23 42 / 4.5%);
 }
 
 .searchField {
@@ -214,11 +247,12 @@
 
 .riskPanel {
   position: absolute;
-  z-index: 30;
+  z-index: 1;
   top: calc(100% + var(--space-2));
   right: 0;
   display: grid;
   min-width: 208px;
+  margin: 0;
   padding: var(--space-2);
   border: var(--border-width-default) solid var(--color-border-default);
   border-radius: var(--radius-md);
@@ -336,4 +370,33 @@
   border-color: var(--color-border-subtle);
   background: var(--color-bg-surface-subtle);
   color: var(--color-text-muted);
+}
+
+.visuallyHidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+@supports (
+  (backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))
+) {
+  .toolbar {
+    background: var(--material-toolbar-glass);
+    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(12px);
+  }
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  .toolbar {
+    background: var(--material-toolbar-opaque);
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
 }
