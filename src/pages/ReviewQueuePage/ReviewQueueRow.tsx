@@ -1,6 +1,7 @@
 import { formatQueueAmount } from './lib/reviewQueueFormatters';
 import type { ReviewQueueItem } from './model/reviewQueue.types';
 import { CaseCell } from './CaseCell';
+import { OverflowTooltipText } from './OverflowTooltipText';
 import { RiskSignalSummary } from './RiskSignalSummary';
 import { SlaIndicator } from './SlaIndicator';
 import styles from './ReviewQueueTable.module.css';
@@ -36,10 +37,10 @@ export const ReviewQueueRow = ({
         </span>
       </td>
       <td className={`${styles.bodyCell} ${styles.nameCell}`}>
-        <span className={styles.nameText}>{item.clientName}</span>
+        <OverflowTooltipText text={item.clientName} />
       </td>
       <td className={`${styles.bodyCell} ${styles.nameCell}`}>
-        <span className={styles.nameText}>{item.recipientName}</span>
+        <OverflowTooltipText text={item.recipientName} />
       </td>
       <td
         className={`${styles.bodyCell} ${isRiskPopoverOpen ? styles.riskPopoverCellOpen : ''}`}

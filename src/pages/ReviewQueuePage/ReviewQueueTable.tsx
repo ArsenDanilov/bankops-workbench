@@ -39,6 +39,9 @@ export const ReviewQueueTable = ({
       aria-busy={isLoading}
     >
       <table className={styles.table}>
+        <caption className={styles.visuallyHidden}>
+          Review cases. Fixed order by due time, then created time.
+        </caption>
         <colgroup>
           <col className={styles.slaColumn} />
           <col className={styles.caseColumn} />
@@ -53,9 +56,6 @@ export const ReviewQueueTable = ({
           <tr>
             <th className={styles.headerCell} scope="col">
               SLA <span aria-hidden="true">↑</span>
-              <span className={styles.visuallyHidden}>
-                Ordered by due time, then created time
-              </span>
             </th>
             <th className={styles.headerCell} scope="col">
               Case
