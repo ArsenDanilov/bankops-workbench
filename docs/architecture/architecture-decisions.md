@@ -44,13 +44,23 @@ not part of the current baseline.
 ## Testing and quality roadmap
 
 - Existing checks: ESLint (`npm run lint`), TypeScript (`npm run typecheck`),
-  production build (`npm run build`); Prettier is installed.
-- No `test` script, automated test suite or CI configuration exists in this
-  baseline. Do not report these as passing or introduce them in M-AUTO1.
-- M9 — Quality Gate is the next planned major milestone; its precise tests,
-  tooling and acceptance criteria require a separately approved task.
-- M10 — Async Data Foundation follows. E2E/final quality remains later backlog
-  work; no testing framework choice is implied by this document.
+  Vitest (`npm run test`) and production build (`npm run build`); Prettier is
+  installed. `test` runs once; `test:watch` is the optional local watch command.
+- M9 adds Vitest with jsdom, React Testing Library, user-event and jest-dom. Its
+  separate test config merges the existing Vite config and uses at most two
+  isolated thread workers (the default fork worker stalled on the local Windows
+  host). Isolation remains enabled.
+- Tests are colocated with Queue components, hooks and pure helpers. The generic
+  `src/test/setup.ts` registers matchers, cleans up rendered trees, restores
+  mocks/timers/globals and supplies a no-layout ResizeObserver stub for jsdom.
+  Application fixtures are not part of global setup. No production refactor is
+  required. Test code and configuration participate in TypeScript checking.
+- GitHub Actions runs a single Node 24 job for pushes and pull requests:
+  `npm ci` → lint → typecheck → test → build. No deployment or coverage service.
+- M9 implementation requires human acceptance. M-AUTO2 — Codex SDK Orchestrator
+  is the recommended separately approved follow-up, not part of this application
+  architecture or an installed capability. M10 remains the async-data milestone.
+  E2E/final quality remains later backlog work.
 - Visible UI changes require browser self-review at the relevant specification's
   viewport, including console, keyboard, states and material fallbacks.
 - Every milestone ends with factual verification and a standardized

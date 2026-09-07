@@ -3,9 +3,11 @@
 Planning order only; these entries are not implementation specifications or
 authorization. Only [current.md](current.md) defines the active approved task.
 
-Human review has approved M9 as the next milestone after accepted M-AUTO1. M9 is
-awaiting its dedicated implementation task; this does not authorize tests, CI or
-other implementation yet. The remaining entries retain their planned status.
+M-AUTO1 is accepted. M9 now has its dedicated approved assignment; see the active
+task for implementation/review status. After M9 acceptance, the recommended
+workflow milestone is **M-AUTO2 — Codex SDK Orchestrator**, requiring separate
+approval before any work. The product backlog below otherwise retains its order;
+M10 is not part of M9.
 
 1. M9 — Quality Gate
 2. M10 — Async Data Foundation

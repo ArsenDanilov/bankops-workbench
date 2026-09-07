@@ -1,22 +1,19 @@
 # Current implementation milestone
 
 Current milestone:
-M-AUTO1 — BankOps Agent Workflow Foundation
+M9 — Quality Gate
 
 Status:
-ACCEPTED
+NEEDS_REVIEW
 
-Human review is complete. M-AUTO1 was explicitly accepted by the human reviewer.
+M-AUTO1 is human-accepted; its acceptance remains recorded in
+[the M-AUTO1 report](../reports/M-AUTO1-agent-workflow-foundation.md).
 
-## Next approved milestone
+## Approved assignment
 
-**M9 — Quality Gate** is approved as the next milestone and is awaiting its
-dedicated implementation task. Its implementation scope and acceptance criteria
-are not yet supplied; do not start implementation, add tests or CI, or install
-dependencies. M9 is not `READY` or `IN_PROGRESS` yet.
-
-Keep M-AUTO1 recorded here as `ACCEPTED` until the dedicated M9 task is provided;
-then replace the active task and retain M-AUTO1 acceptance in its report.
+Create an automated safety net around Review Queue Visual Prototype v1 before
+M10 replaces its data source. The dedicated M9 task approves Vitest, jsdom,
+React Testing Library, user-event and jest-dom as development dependencies.
 
 This file contains only the currently approved implementation milestone. Backlog
 entries are not concurrent assignments. Replace this task only when the next
@@ -24,26 +21,36 @@ milestone is approved; preserve completed facts in milestone reports.
 
 ## Goal and scope
 
-Create the repository development contract, concise Product/Visual/Architecture
-baselines, task/backlog files and standardized reporting. No custom orchestrator.
+Configure deterministic non-watch `npm run test`, keep global setup generic,
+cover URL state, filtering/search, Risk disclosure, incoming cases, current
+pagination and useful accessibility contracts. Add a minimal GitHub Actions gate
+using Node 24 and `npm ci`, lint, typecheck, test and build. Preserve existing
+lint/typecheck/build semantics and approved Product/UX/visual behavior.
 
 ## Acceptance and verification
 
-- Create root `AGENTS.md` and populated `docs/product`, `docs/visual`,
-  `docs/architecture`, `docs/tasks`, `docs/reports` directories.
-- Document approved decisions and actual implementation separately; report
-  missing details or discrepancies instead of inventing requirements.
-- Run existing lint, typecheck and build commands; run tests only if present.
-- Inspect Git diff, including new files; no application behavior changes.
-- The [M-AUTO1 report](../reports/M-AUTO1-agent-workflow-foundation.md) records
-  completed verification and human acceptance. The task transitioned from
-  `IN_PROGRESS` to `NEEDS_REVIEW`, then to `ACCEPTED` on the human decision.
+- Verify infrastructure, pure logic and interactions in phases; fix in-scope
+  failures before proceeding. Avoid coverage-percentage targets or brittle tests.
+- Final gate: `npm run lint`, `npm run typecheck`, `npm run test`, `npm run build`.
+- Review Git diff and validate the CI workflow where possible.
+- Browser regression review is required only if production application code changes.
+- The [M9 report](../reports/M9-quality-gate.md) records test architecture,
+  coverage, CI, production testability changes and final verification results.
+- On completion set `NEEDS_REVIEW`, never `ACCEPTED` without human acceptance.
 
 ## Out of scope
 
-No changes to React source, routes, Queue UI/URL state, fixtures, CSS tokens,
-dependencies or package scripts. No tests, CI, automation scripts, Codex SDK,
-TanStack Query, MSW, backend work, M9 or M10 implementation.
+No intentional changes to Queue UI, geometry, fonts, routing, filters, URL
+contract, domain semantics or fixtures. Only small behavior-preserving production
+refactors for clear testability needs are allowed. No M10, TanStack Query, MSW,
+API client, backend, server pagination, polling, real-time data, global state
+store, TanStack Table, Playwright, Cypress, Storybook, visual regression,
+deployment, Workspace or Case History implementation.
+
+## Recommended follow-up after human acceptance
+
+M-AUTO2 — Codex SDK Orchestrator, subject to its own separately approved milestone.
+Do not start it automatically; no orchestrator or SDK belongs to M9.
 
 ## Allowed statuses
 
