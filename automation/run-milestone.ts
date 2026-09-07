@@ -1,4 +1,3 @@
-import { execFileSync } from 'node:child_process';
 import {
   closeSync,
   mkdirSync,
@@ -13,6 +12,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { randomUUID } from 'node:crypto';
 import { prepareCodex, startAgent } from './lib/codex.ts';
+import { resolveGitRoot } from './lib/git.ts';
 import { createLog, makeRedactor } from './lib/log.ts';
 import { orchestrate } from './lib/orchestrator.ts';
 import {
@@ -46,15 +46,7 @@ async function main(): Promise<void> {
   const root = realpathSync(
     path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..'),
   );
-  const gitRoot = realpathSync(
-    execFileSync('git', ['rev-parse', '--show-toplevel'], {
-      cwd: root,
-      encoding: 'utf8',
-      windowsHide: true,
-    }).trim(),
-  );
-  if (root !== gitRoot)
-    throw new Error('Runner must live at this Git repository root');
+  await resolveGitRoot(root);
   for (const filename of REQUIRED_FILES) {
     if (!readFileSync(safePath(root, filename), 'utf8').trim())
       throw new Error(`Empty required document: ${filename}`);
@@ -76,7 +68,7 @@ async function main(): Promise<void> {
   );
   if (missing.length)
     console.log(`Absent scripts (not run): ${missing.join(', ')}`);
-  // Preflight checks are read-only, including SDK construction, even when state refuses execution.
+  // Preflight does not change project state; transient Git captures are cleaned.
   const codex = prepareCodex();
   console.log(
     'SDK/runtime resolved. Authentication is not contacted by dry-run; use codex login status separately.',

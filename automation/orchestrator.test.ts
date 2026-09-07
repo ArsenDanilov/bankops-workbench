@@ -174,6 +174,18 @@ describe('task contract', () => {
 });
 
 describe('bounded same-thread orchestration', () => {
+  it('repairs infrastructure failures even when the subprocess exited zero', async () => {
+    const options = setup(fixture());
+    options.verify.mockResolvedValueOnce([
+      { ...result(), error: 'Output exceeded limit' },
+    ]);
+    await orchestrate(options);
+    expect(options.run).toHaveBeenCalledTimes(2);
+    expect(options.verify).toHaveBeenCalledTimes(2);
+    expect(options.run.mock.calls[1]).toEqual([
+      expect.stringContaining('Output exceeded limit'),
+    ]);
+  });
   it('succeeds only after agent, independent verification and final contract', async () => {
     const options = setup(fixture());
     await orchestrate(options);

@@ -11,9 +11,9 @@
     "dev": "vite",
     "lint": "eslint .",
     "typecheck": "tsc -b",
-    "test": "vitest run",
+    "test": "vitest run --configLoader native",
     "test:watch": "vitest",
-    "build": "tsc -b && vite build",
+    "build": "tsc -b && vite build --configLoader native",
     "preview": "vite preview"
   },
   "dependencies": {

@@ -67,6 +67,14 @@ scripts, create logs/locks, or change project state. READY returns zero; a
 non-executable state or failed prerequisite returns nonzero. An expected refusal
 for NEEDS_REVIEW/IN_PROGRESS is a safe way to test the guard.
 
+Git preflight always runs `git rev-parse --show-toplevel` and requires its real,
+canonical directory to equal the runner repository root. Empty/multiline/relative
+output, nonexistent roots, non-repositories, nested runner locations and command
+or capture failures refuse execution. There is no `.git`-presence fallback.
+Git uses a 30-second timeout and 64 KiB per-stream output bound. On Windows,
+including dry-run, transient OS-temp capture files are created and cleaned; no
+project state is changed by this check.
+
 ## Lifecycle and verification
 
 1. Only `READY` may start. IN_PROGRESS, NEEDS_REVIEW, BLOCKED and ACCEPTED refuse.
@@ -115,6 +123,54 @@ processes, Git diff, task/report and logs before manually removing **that run's*
 lock and explicitly restoring READY. Do not remove a lock while its process runs.
 There is no automatic crash recovery/resume; same-thread repairs apply to a single
 live run. Do not edit task metadata concurrently with an active run.
+
+## Windows subprocess compatibility
+
+The initial [live smoke](../docs/reports/M-AUTO2-live-sdk-smoke.md) remains a
+historical BLOCKED result. Diagnosis reproduced `spawn EPERM` in Windows stdio
+pipe creation: Vite's config bundler called `exec("net use")` before Vitest workers
+started. A minimal child process with file descriptors worked under the same
+permissions; the exact underlying Windows policy/ACL was not identified.
+
+The approved project-level workaround is limited to:
+
+- `test` and the Vite part of `build` use the supported `--configLoader native`
+  option with Node 24. They still execute the entire test suite and production
+  build. Test pool, isolation, assertions and CI workflow are unchanged.
+- Shared `lib/command.ts`, used by verification and Git preflight, uses `spawn`
+  with stdout/stderr file descriptors on Windows;
+  other platforms retain `execFile` with pipes. No shell or new permissions are
+  introduced. SDK execution/security settings are unchanged.
+- Each Windows command gets a uniquely created OS-temp directory and exclusive
+  capture files (requested mode 0600; Windows inherits OS access controls). Output
+  is transiently written verbatim there, then redacted before returning results
+  or persisting JSONL logs. Commands must not print secrets. No raw capture is
+  intentionally retained; descriptors, both files and the exact temp directory
+  are cleaned on completion, launch/setup errors, timeout and output-limit errors.
+  Cleanup errors explicitly fail the command. A hard-killed parent or OS denial
+  can still prevent cleanup; this is not secure erasure or a sandbox boundary.
+- Each stream is monitored every 20 ms and the process is terminated on overflow;
+  a final size check catches short-lived output bursts. Verification reads are
+  capped at 1 MiB per stream; Git preflight uses 64 KiB. Temporary disk usage can
+  overshoot between samples, unlike the hard read limit. The command deadline
+  (10 minutes for verification, 30 seconds for Git) requests SIGTERM; on Windows
+  Node uses forceful termination. Descendants remain outside v1 supervision.
+- A command result retains its real process exit code (null if launch failed),
+  stdout/stderr and an optional `error` for launch/capture/timeout/limit/cleanup
+  failures. Synchronous spawn/execFile exceptions become structured results.
+  Exit 0 with an infrastructure error is **not** success and enters the same
+  bounded repair loop; Human Gates still stop it immediately.
+
+The new capture tests exercise real file-descriptor transport on every platform
+and mock the pipe adapter for deterministic error coverage on restricted Windows.
+No dependencies, Windows policies, sandbox modes or quality checks were changed.
+
+Repeat 1 stopped at the former `execFileSync('git', ...)` pipe-based preflight.
+The separately approved Git fix reuses the capture primitive without changing
+its transports, result contract or cleanup. Git errors stop before SDK/task/lock
+creation; they never trigger verification repairs. Focused Git tests use real
+temporary repositories plus injected failure/malformed-result cases. Historical
+smoke results remain immutable; repeat 2 is recorded separately.
 
 ## Tests and human responsibilities
 

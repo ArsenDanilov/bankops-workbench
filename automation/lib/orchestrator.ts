@@ -71,7 +71,7 @@ export async function orchestrate({
       `Requesting repair ${repairs + 1}/${MAX_REPAIR_ATTEMPTS} in the same Codex thread.`,
     );
     const failures = results
-      .filter((result) => result.exitCode !== 0)
+      .filter((result) => !passed([result]))
       .map((result) => ({
         ...result,
         stdout: redact(result.stdout).slice(-16000),

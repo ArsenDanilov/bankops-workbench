@@ -90,3 +90,36 @@ not part of the current baseline.
   TypeScript project is included in `tsc -b`; no automation ships to the browser.
 
 Operational prerequisites and recovery limits: [automation/README.md](../../automation/README.md).
+
+### Approved Windows verification workaround
+
+The first live smoke remains historically BLOCKED. Diagnosis isolated Windows
+`stdio: pipe` failures: Vite's bundled config loader invoked `net use`, and the
+verification adapter's own `execFile` calls also failed under the restricted
+environment. This was not a Vitest thread-pool failure.
+
+The approved fix uses Node 24's native config loader for test/build and Windows
+file-descriptor capture for verification subprocess output. Other platforms keep
+the pipe adapter. Commands, complete test coverage, isolation, real exit codes,
+timeouts, output limits, redaction and the three-repair ceiling remain enforced.
+Capture/cleanup errors are explicit failures even if a child exits zero. Temporary
+captures are cleaned in finally paths; polling disk-limit overshoot and hard-stop
+cleanup limitations are documented in the runner instructions. This does not
+change SDK permissions, authentication, CI workflow or application architecture.
+
+### Approved Windows Git-preflight workaround
+
+Repeat 1 stopped before SDK creation at `execFileSync('git', ...)` with EPERM,
+consistent with the diagnosed Windows stdio-pipe limitation. The scoped fix
+extracts the existing capture into `automation/lib/command.ts`; verification and
+Git preflight both consume it. Windows uses temporary file descriptors and other
+platforms retain pipes, with unchanged redaction, cleanup and result semantics.
+
+The runner still executes `git rev-parse --show-toplevel`, canonicalizes its
+single absolute directory result and requires equality with the runner root.
+Invalid/non-root repositories, malformed output and process/capture errors fail
+closed before SDK execution. Git is bounded to 30 seconds and 64 KiB per stream.
+Dry-run may create and remove transient OS-temp captures, but no project state.
+This does not change permissions, SDK transport/settings, dependencies, CI,
+quality/repair guards, Product/UI or M10. Initial smoke and repeat 1 stay BLOCKED
+as historical records; repeat 2 has a separate report.

@@ -1,20 +1,14 @@
-import { execFile } from 'node:child_process';
-import { readFileSync } from 'node:fs';
+import fs from 'node:fs';
 import { safePath } from './task.ts';
+import { passed, runCommand, type CommandResult } from './command.ts';
+export { passed, runCommand, type CommandResult } from './command.ts';
 
 export const QUALITY_SCRIPTS = ['lint', 'typecheck', 'test', 'build'] as const;
 export type Script = { name: string; definition: string };
-export type CommandResult = {
-  command: string;
-  exitCode: number | null;
-  stdout: string;
-  stderr: string;
-};
-const COMMAND_TIMEOUT_MS = 10 * 60 * 1000;
 
 export function detectScripts(root: string): Script[] {
   const manifest = JSON.parse(
-    readFileSync(safePath(root, 'package.json'), 'utf8'),
+    fs.readFileSync(safePath(root, 'package.json'), 'utf8'),
   ) as { scripts?: Record<string, unknown> };
   const scripts = QUALITY_SCRIPTS.flatMap((name) => {
     const definition = manifest.scripts?.[name];
@@ -38,43 +32,6 @@ export function requireUnchangedScripts(
   }
 }
 
-export function runCommand(
-  executable: string,
-  args: string[],
-  cwd: string,
-  command: string,
-): Promise<CommandResult> {
-  return new Promise((resolve) => {
-    execFile(
-      executable,
-      args,
-      {
-        cwd,
-        windowsHide: true,
-        timeout: COMMAND_TIMEOUT_MS,
-        maxBuffer: 1024 * 1024,
-        encoding: 'utf8',
-      },
-      (error, stdout, stderr) => {
-        resolve({
-          command,
-          exitCode: error
-            ? typeof error.code === 'number'
-              ? error.code
-              : null
-            : 0,
-          stdout,
-          stderr: error ? `${stderr}\n${error.message}` : stderr,
-        });
-      },
-    );
-  });
-}
-
-export function passed(results: CommandResult[]): boolean {
-  return results.length > 0 && results.every((result) => result.exitCode === 0);
-}
-
 export async function verify(
   root: string,
   npmCli: string,
@@ -92,7 +49,7 @@ export async function verify(
     );
     log(result);
     console.log(
-      `${result.command}: ${result.exitCode === 0 ? 'PASS' : `FAIL (${result.exitCode ?? 'process error'})`}`,
+      `${result.command}: ${passed([result]) ? 'PASS' : `FAIL (${result.exitCode ?? 'process error'}${result.error ? `; ${result.error}` : ''})`}`,
     );
     results.push(result);
   }
