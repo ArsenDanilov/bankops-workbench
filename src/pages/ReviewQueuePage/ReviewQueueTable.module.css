@@ -97,7 +97,8 @@
   );
 }
 
-.emptyRow {
+.emptyRow,
+.errorRow {
   height: 120px;
 }
 
@@ -108,6 +109,40 @@
   font-weight: var(--font-weight-regular);
   text-align: center;
   vertical-align: middle;
+}
+
+.errorCell {
+  height: 120px;
+  padding: var(--space-3);
+  color: var(--color-text-secondary);
+  font-weight: var(--font-weight-regular);
+  text-align: center;
+  vertical-align: middle;
+}
+
+.errorCell strong,
+.errorCell span {
+  display: block;
+}
+
+.errorCell strong {
+  color: var(--color-text-primary);
+}
+
+.errorCell span {
+  margin-block: var(--space-1) var(--space-2);
+}
+
+.errorCell button {
+  min-height: 30px;
+  padding-inline: var(--space-3);
+  border: var(--border-width-default) solid var(--color-accent-border);
+  border-radius: var(--radius-sm);
+  background: var(--color-accent-subtle);
+  color: var(--color-accent);
+  cursor: pointer;
+  font: inherit;
+  font-weight: var(--font-weight-medium);
 }
 
 .bodyCell {

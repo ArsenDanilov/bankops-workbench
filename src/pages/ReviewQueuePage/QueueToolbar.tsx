@@ -16,6 +16,7 @@ interface QueueToolbarProps {
   onRiskSignalToggle: (riskSignal: ReviewQueueRiskSignal) => void;
   onReset: () => void;
   hasPendingIncomingCase: boolean;
+  isIncorporatingIncomingCase: boolean;
   onIncorporateIncomingCase: () => void;
 }
 
@@ -31,6 +32,7 @@ export const QueueToolbar = ({
   onRiskSignalToggle,
   onReset,
   hasPendingIncomingCase,
+  isIncorporatingIncomingCase,
   onIncorporateIncomingCase,
 }: QueueToolbarProps) => {
   const [isRiskPanelOpen, setIsRiskPanelOpen] = useState(false);
@@ -124,6 +126,7 @@ export const QueueToolbar = ({
         <button
           className={filterButtonClassName(state.riskSignals.length > 0)}
           type="button"
+          disabled={isIncorporatingIncomingCase}
           ref={riskTriggerRef}
           aria-expanded={isRiskPanelOpen}
           aria-controls={riskPanelId}

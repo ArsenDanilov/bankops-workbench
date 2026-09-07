@@ -139,6 +139,12 @@
   fill: currentcolor;
 }
 
+.iconButton:disabled,
+.incomingUpdateButton:disabled {
+  cursor: progress;
+  opacity: 0.64;
+}
+
 .toolbar {
   position: sticky;
   z-index: 20;

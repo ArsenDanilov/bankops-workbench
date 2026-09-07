@@ -16,36 +16,46 @@
 ## State and data boundaries
 
 - URL parameters own Queue search, scope, SLA, risk filters and page. The
-  `useReviewQueueSearchParams` hook parses/serializes URL state; pure helpers
-  filter and sort the derived list. See [Queue behavior](../visual/review-queue.md).
-- Local React state owns transient UI: toolbar panel visibility, the open row
-  risk popover, actual truncation/tooltip visibility, pending incoming fixture
-  incorporation and its highlight timer. Do not move these into URL state or a
-  speculative global store.
+  `useReviewQueueSearchParams` hook preserves the public URL contract and supplies
+  canonical server-affecting inputs to the query key and API request.
+- TanStack Query owns Review Queue server state: response data/metadata, initial
+  loading, retained data during background fetching, refresh, error and retry.
+  Query keys use normalized primitive segments for all server-affecting inputs.
+- Local React state owns transient UI only: toolbar/risk disclosures, actual
+  truncation tooltips and temporary incorporated-row emphasis. URL and server
+  state are not duplicated there.
 - `ReviewQueueItem` is the typed Queue projection, not a full ReviewCase model.
   It separates lifecycle, ownership, SLA state and risk signals/score, with IDs,
   timestamps, amount/currency and display names needed by the Queue.
-- Local typed fixtures currently provide ten initial items and one separate
-  incoming item. Queue operations derive display data without server calls.
-- Loading remains a presentation state; header refresh and timestamps are not
-  backed by an asynchronous request.
+- Native `fetch` calls the typed `/api/review-cases` collection boundary and
+  forwards TanStack Query's AbortSignal. Lightweight runtime parsing validates
+  the response envelope and Queue projection fields; no schema library exists.
+- MSW owns ten deterministic initial fixtures and one pending incoming fixture.
+  Its handler applies the shared search/filter logic, operational ordering and
+  pagination, and returns total/page/pageSize/updatedAt/pendingCount metadata.
+  A short deterministic delay exposes real request states. The explicit incoming
+  POST incorporates the one pending case; no polling or random events exist.
 - No Redux/Zustand or other global client state store. Avoid premature shared
   abstractions, generic UI-kit components and speculative domain models.
 
-## Planned, not implemented
+## Async data boundary — M10
 
-The approved Async Data milestone (M10) is the boundary for TanStack Query for
-async server state, MSW for the mock API and native `fetch` for requests. These
-are plans, not installed capabilities or authorization to add dependencies now.
-Do not replace routing, styling or URL-state ownership as part of that work
-without an explicit architecture decision. Axios and backend infrastructure are
-not part of the current baseline.
+M10 implements TanStack Query, native fetch and MSW for Review Queue only. MSW
+starts once at the application boundary in local development and once through
+central Vitest lifecycle hooks in tests; feature components do not know the
+transport is mocked. Production builds contain the API client but do not start a
+mock worker. There is no Axios, backend, persistence, authentication, global
+client store, polling, SSE or WebSocket. Workspace APIs remain future work.
 
 ## Testing and quality roadmap
 
 - Existing checks: ESLint (`npm run lint`), TypeScript (`npm run typecheck`),
   Vitest (`npm run test`) and production build (`npm run build`); Prettier is
   installed. `test` runs once; `test:watch` is the optional local watch command.
+- The previously human-approved Windows-safe Vite workaround uses its supported
+  native config loader in `test` and the Vite part of `build`. It changes neither
+  test coverage/pool nor build scope and avoids the restricted host's stdio-pipe
+  `spawn EPERM`; no elevated Windows permission is required.
 - M9 adds Vitest with jsdom, React Testing Library, user-event and jest-dom. Its
   separate test config merges the existing Vite config and uses at most two
   isolated thread workers (the default fork worker stalled on the local Windows
@@ -57,9 +67,9 @@ not part of the current baseline.
   required. Test code and configuration participate in TypeScript checking.
 - GitHub Actions runs a single Node 24 job for pushes and pull requests:
   `npm ci` → lint → typecheck → test → build. No deployment or coverage service.
-- M9 implementation requires human acceptance. M-AUTO2 — Codex SDK Orchestrator
-  is the recommended separately approved follow-up, not part of this application
-  architecture or an installed capability. M10 remains the async-data milestone.
+- M9 is human-accepted and present on the main development line. M10 implements
+  the separately approved Queue async-data milestone. Review Case Workspace
+  Visual Design remains the recommended next milestone after human acceptance;
   E2E/final quality remains later backlog work.
 - Visible UI changes require browser self-review at the relevant specification's
   viewport, including console, keyboard, states and material fallbacks.

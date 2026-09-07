@@ -98,12 +98,13 @@ the trigger, outside pointer closes it, and keyboard navigation has no trap.
 - Rows have subtle hover and `focus-within` treatments but are not clickable or
   focusable as whole rows.
 - Empty results use a solid, seven-column spanning message.
-- Loading is a table presentation prop: nine static skeleton rows with unchanged
-  geometry, no shimmer/pulse. The results region is busy and skeleton content is
-  hidden from assistive technology. It is not connected to an async request yet.
-- Header workload counts and `Updated 13:24` are fixed prototype copy. Refresh
-  has no data-fetch action yet; its accessible name and hover/focus tooltip are
-  both `Refresh queue`.
+- Initial uncached loading uses nine static skeleton rows with unchanged geometry,
+  no shimmer/pulse. The results region is busy and skeleton content is hidden
+  from assistive technology. Background fetching retains existing table data.
+- Header workload counts remain prototype copy. Updated time comes from response
+  metadata; background requests show restrained `Updating…`. Refresh performs a
+  query refetch without a page reload and retains its accessible name/tooltip
+  `Refresh queue`. Initial request errors have a distinct Retry state.
 
 ## Accessibility and review contract
 

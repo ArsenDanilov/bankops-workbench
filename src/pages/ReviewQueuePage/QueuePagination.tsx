@@ -1,22 +1,23 @@
-import { REVIEW_QUEUE_PAGE_SIZE } from './model/reviewQueueSearchParams.types';
 import styles from './ReviewQueuePage.module.css';
 
 interface QueuePaginationProps {
   currentPage: number;
   totalItems: number;
+  pageSize: number;
   onPageChange: (page: number) => void;
+  disabled?: boolean;
 }
 
 export const QueuePagination = ({
   currentPage,
   totalItems,
+  pageSize,
   onPageChange,
+  disabled = false,
 }: QueuePaginationProps) => {
-  const pageCount = Math.max(1, Math.ceil(totalItems / REVIEW_QUEUE_PAGE_SIZE));
-  const firstItem = totalItems
-    ? (currentPage - 1) * REVIEW_QUEUE_PAGE_SIZE + 1
-    : 0;
-  const lastItem = Math.min(currentPage * REVIEW_QUEUE_PAGE_SIZE, totalItems);
+  const pageCount = Math.max(1, Math.ceil(totalItems / pageSize));
+  const firstItem = totalItems ? (currentPage - 1) * pageSize + 1 : 0;
+  const lastItem = Math.min(currentPage * pageSize, totalItems);
 
   return (
     <nav className={styles.pagination} aria-label="Review queue pagination">
@@ -28,7 +29,7 @@ export const QueuePagination = ({
         <button
           className={styles.paginationButton}
           type="button"
-          disabled={currentPage === 1}
+          disabled={disabled || currentPage === 1}
           onClick={() => onPageChange(currentPage - 1)}
         >
           Previous
@@ -36,7 +37,7 @@ export const QueuePagination = ({
         <button
           className={styles.paginationButton}
           type="button"
-          disabled={currentPage === pageCount}
+          disabled={disabled || currentPage === pageCount}
           onClick={() => onPageChange(currentPage + 1)}
         >
           Next

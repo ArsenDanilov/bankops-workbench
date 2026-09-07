@@ -1,6 +1,6 @@
 import { render, screen, within } from '@testing-library/react';
 import { expect, it } from 'vitest';
-import { reviewQueueFixtures } from './model/reviewQueue.fixtures';
+import { reviewQueueFixtures } from '../../mocks/data/reviewQueue.fixtures';
 import { ReviewQueueTable } from './ReviewQueueTable';
 
 it('marks the results busy during the static skeleton and restores accessible data when ready', () => {

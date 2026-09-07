@@ -10,12 +10,16 @@ interface ReviewQueueTableProps {
   items: readonly ReviewQueueItem[];
   highlightedCaseId?: string | null;
   presentationState?: ReviewQueueTablePresentationState;
+  error?: Error | null;
+  onRetry?: () => void;
 }
 
 export const ReviewQueueTable = ({
   items,
   highlightedCaseId = null,
   presentationState = 'ready',
+  error = null,
+  onRetry,
 }: ReviewQueueTableProps) => {
   const [openRiskPopoverCaseId, setOpenRiskPopoverCaseId] = useState<
     string | null
@@ -87,6 +91,16 @@ export const ReviewQueueTable = ({
         <tbody aria-hidden={isLoading || undefined}>
           {isLoading ? (
             <ReviewQueueTableSkeleton />
+          ) : error ? (
+            <tr className={styles.errorRow}>
+              <td className={styles.errorCell} colSpan={7}>
+                <strong>Queue data could not be loaded.</strong>
+                <span>{error.message}</span>
+                <button type="button" onClick={onRetry}>
+                  Retry
+                </button>
+              </td>
+            </tr>
           ) : items.length > 0 ? (
             items.map((item) => (
               <ReviewQueueRow
