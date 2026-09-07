@@ -1,4 +1,4 @@
-import type { ReviewQueueItem } from './reviewQueue.types';
+import type { ReviewQueueItem } from '../../pages/ReviewQueuePage/model/reviewQueue.types';
 
 export const reviewQueueFixtures = [
   {

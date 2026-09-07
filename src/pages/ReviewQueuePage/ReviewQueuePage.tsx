@@ -1,11 +1,8 @@
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useEffect, useRef, useState } from 'react';
 import { useReviewQueueSearchParams } from './hooks/useReviewQueueSearchParams';
-import { filterReviewQueueItems } from './lib/filterReviewQueueItems';
-import { sortReviewQueueItemsByOperationalOrder } from './lib/sortReviewQueueItems';
-import {
-  incomingReviewQueueFixture,
-  reviewQueueFixtures,
-} from './model/reviewQueue.fixtures';
+import { incorporateIncomingReviewCase } from './api/reviewQueueApi';
+import { reviewQueueQueryOptions } from './api/reviewQueueQuery';
 import { REVIEW_QUEUE_PAGE_SIZE } from './model/reviewQueueSearchParams.types';
 import { QueuePagination } from './QueuePagination';
 import { QueueToolbar } from './QueueToolbar';
@@ -14,7 +11,7 @@ import styles from './ReviewQueuePage.module.css';
 import { ReviewQueueTable } from './ReviewQueueTable';
 
 export const ReviewQueuePage = () => {
-  const [isIncomingCasePending, setIsIncomingCasePending] = useState(true);
+  const queryClient = useQueryClient();
   const [highlightedCaseId, setHighlightedCaseId] = useState<string | null>(
     null,
   );
@@ -30,29 +27,29 @@ export const ReviewQueuePage = () => {
     setPage,
     reset,
   } = useReviewQueueSearchParams();
-  const incorporatedItems = isIncomingCasePending
-    ? reviewQueueFixtures
-    : sortReviewQueueItemsByOperationalOrder([
-        ...reviewQueueFixtures,
-        incomingReviewQueueFixture,
-      ]);
-  const filteredItems = filterReviewQueueItems(incorporatedItems, state);
-  const pageCount = Math.max(
-    1,
-    Math.ceil(filteredItems.length / REVIEW_QUEUE_PAGE_SIZE),
-  );
-  const currentPage = Math.min(state.page, pageCount);
-  const pageStart = (currentPage - 1) * REVIEW_QUEUE_PAGE_SIZE;
-  const currentItems = filteredItems.slice(
-    pageStart,
-    pageStart + REVIEW_QUEUE_PAGE_SIZE,
-  );
+  const request = { ...state, pageSize: REVIEW_QUEUE_PAGE_SIZE };
+  const queue = useQuery(reviewQueueQueryOptions(request));
+  const incorporation = useMutation({
+    mutationFn: () => incorporateIncomingReviewCase(),
+    onSuccess: async ({ incorporatedCaseId }) => {
+      await queryClient.invalidateQueries({ queryKey: ['reviewQueue'] });
+      if (!incorporatedCaseId) return;
+      setHighlightedCaseId(incorporatedCaseId);
+      if (highlightTimerRef.current !== null)
+        clearTimeout(highlightTimerRef.current);
+      highlightTimerRef.current = setTimeout(() => {
+        setHighlightedCaseId(null);
+        highlightTimerRef.current = null;
+      }, 1800);
+    },
+  });
+  const currentPage = queue.data?.page ?? state.page;
 
   useEffect(() => {
-    if (pageParamNeedsNormalization || currentPage !== state.page) {
-      setPage(currentPage, true);
-    }
-  }, [currentPage, pageParamNeedsNormalization, setPage, state.page]);
+    if (pageParamNeedsNormalization) setPage(1, true);
+    else if (queue.data && queue.data.page !== state.page)
+      setPage(queue.data.page, true);
+  }, [pageParamNeedsNormalization, queue.data, setPage, state.page]);
 
   useEffect(
     () => () => {
@@ -63,28 +60,15 @@ export const ReviewQueuePage = () => {
     [],
   );
 
-  const incorporateIncomingCase = () => {
-    if (!isIncomingCasePending) {
-      return;
-    }
-
-    setIsIncomingCasePending(false);
-    setHighlightedCaseId(incomingReviewQueueFixture.caseId);
-
-    if (highlightTimerRef.current !== null) {
-      clearTimeout(highlightTimerRef.current);
-    }
-
-    highlightTimerRef.current = setTimeout(() => {
-      setHighlightedCaseId(null);
-      highlightTimerRef.current = null;
-    }, 1800);
-  };
-
   return (
     <div className={styles.page}>
       <div className={styles.content}>
-        <ReviewQueueHeader />
+        <ReviewQueueHeader
+          updatedAt={queue.data?.updatedAt}
+          isUpdating={queue.isFetching && !queue.isPending}
+          updateFailed={queue.isError && Boolean(queue.data)}
+          onRefresh={() => void queue.refetch()}
+        />
         <QueueToolbar
           state={state}
           hasActiveQuery={hasActiveQuery}
@@ -93,18 +77,24 @@ export const ReviewQueuePage = () => {
           onSlaBreachedToggle={toggleSlaBreached}
           onRiskSignalToggle={toggleRiskSignal}
           onReset={reset}
-          hasPendingIncomingCase={isIncomingCasePending}
-          onIncorporateIncomingCase={incorporateIncomingCase}
+          hasPendingIncomingCase={(queue.data?.pendingCount ?? 0) > 0}
+          isIncorporatingIncomingCase={incorporation.isPending}
+          onIncorporateIncomingCase={() => incorporation.mutate()}
         />
         <div className={styles.toolbarSeparator} aria-hidden="true" />
         <ReviewQueueTable
-          items={currentItems}
+          items={queue.data?.items ?? []}
           highlightedCaseId={highlightedCaseId}
+          presentationState={queue.isPending ? 'loading' : 'ready'}
+          error={queue.isError && !queue.data ? queue.error : null}
+          onRetry={() => void queue.refetch()}
         />
         <QueuePagination
           currentPage={currentPage}
-          totalItems={filteredItems.length}
+          totalItems={queue.data?.total ?? 0}
+          pageSize={queue.data?.pageSize ?? REVIEW_QUEUE_PAGE_SIZE}
           onPageChange={setPage}
+          disabled={queue.isPending}
         />
       </div>
     </div>

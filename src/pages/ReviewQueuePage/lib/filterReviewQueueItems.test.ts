@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { reviewQueueFixtures } from '../model/reviewQueue.fixtures';
+import { reviewQueueFixtures } from '../../../mocks/data/reviewQueue.fixtures';
 import type { ReviewQueueItem } from '../model/reviewQueue.types';
 import type { ReviewQueueSearchState } from '../model/reviewQueueSearchParams.types';
 import { filterReviewQueueItems } from './filterReviewQueueItems';

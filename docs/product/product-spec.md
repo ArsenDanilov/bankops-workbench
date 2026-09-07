@@ -41,6 +41,7 @@ for the Workspace's decision-readiness contexts.
 
 ## Current implementation boundary
 
-The Queue visual prototype uses local fixtures and has no claim/release/block
-execution, Workspace navigation, history or server persistence. Product decisions
+The Queue uses a typed async API backed by deterministic MSW fixtures in local
+development; it still has no real server persistence, claim/release/block
+execution, Workspace navigation or history. Product decisions
 above must not be treated as authorization to implement those features now.

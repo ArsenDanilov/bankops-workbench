@@ -1,5 +1,5 @@
 import { expect, it } from 'vitest';
-import { reviewQueueFixtures } from '../model/reviewQueue.fixtures';
+import { reviewQueueFixtures } from '../../../mocks/data/reviewQueue.fixtures';
 import { sortReviewQueueItemsByOperationalOrder } from './sortReviewQueueItems';
 
 it('orders by dueAt then createdAt without mutating input or sorting by risk', () => {

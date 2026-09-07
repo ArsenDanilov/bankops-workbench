@@ -1,4 +1,13 @@
-import { act, fireEvent, render, screen, within } from '@testing-library/react';
+import {
+  act,
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+  within,
+} from '@testing-library/react';
+import { AppProviders } from '../../app/providers/AppProviders';
+import { createAppQueryClient } from '../../app/providers/queryClient';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter, useLocation } from 'react-router-dom';
 import { describe, expect, it, vi } from 'vitest';
@@ -15,13 +24,22 @@ const LocationProbe = () => {
   );
 };
 
-const renderQueue = (entry = '/review-queue') =>
-  render(
-    <MemoryRouter initialEntries={[entry]}>
-      <AppRouter />
-      <LocationProbe />
-    </MemoryRouter>,
+const renderQueue = async (entry = '/review-queue') => {
+  const result = render(
+    <AppProviders queryClient={createAppQueryClient()}>
+      <MemoryRouter initialEntries={[entry]}>
+        <AppRouter />
+        <LocationProbe />
+      </MemoryRouter>
+    </AppProviders>,
   );
+  await waitFor(() =>
+    expect(
+      screen.getByRole('region', { name: 'Review queue results' }),
+    ).toHaveAttribute('aria-busy', 'false'),
+  );
+  return result;
+};
 
 const queueCaseIds = () =>
   within(screen.getByRole('table'))
@@ -30,8 +48,8 @@ const queueCaseIds = () =>
 const currentUrl = () => screen.getByLabelText('Test location').textContent;
 
 describe('Review Queue', () => {
-  it('renders the existing semantic Queue and current pagination through the root redirect', () => {
-    renderQueue('/');
+  it('renders the existing semantic Queue and current pagination through the root redirect', async () => {
+    await renderQueue('/');
 
     expect(screen.getByLabelText('Test location')).toHaveTextContent(
       '/review-queue',
@@ -70,7 +88,7 @@ describe('Review Queue', () => {
 
   it('searches from the accessible input and Reset restores the dataset without losing unrelated URL params', async () => {
     const user = userEvent.setup();
-    renderQueue('/review-queue?view=compact');
+    await renderQueue('/review-queue?view=compact');
     await user.type(
       screen.getByRole('searchbox', { name: 'Search review queue' }),
       'ЕЛЕНА',
@@ -91,7 +109,7 @@ describe('Review Queue', () => {
 
   it('combines scope, SLA and risk controls and preserves accessible toggle/group state', async () => {
     const user = userEvent.setup();
-    renderQueue();
+    await renderQueue();
     await user.click(screen.getByRole('button', { name: 'Queued' }));
     await user.click(screen.getByRole('button', { name: 'SLA breached' }));
     expect(screen.getByRole('button', { name: 'Queued' })).toHaveAttribute(
@@ -131,7 +149,7 @@ describe('Review Queue', () => {
 
   it('allows keyboard access through the Risk filter without a trap and closes it outside', async () => {
     const user = userEvent.setup();
-    renderQueue();
+    await renderQueue();
     const trigger = screen.getByRole('button', { name: 'Risk signal' });
     trigger.focus();
     await user.keyboard('{Enter}');
@@ -154,7 +172,7 @@ describe('Review Queue', () => {
 
   it('shows the current empty state and disabled pagination for the other-analyst scope', async () => {
     const user = userEvent.setup();
-    renderQueue();
+    await renderQueue();
     await user.click(screen.getByRole('button', { name: 'Other analyst' }));
     expect(queueCaseIds()).toEqual([]);
     expect(
@@ -172,16 +190,18 @@ describe('Review Queue', () => {
 
   it.each(['999', '0', '1'])(
     'normalizes page=%s against the actual dataset while retaining other params',
-    (page) => {
-      renderQueue(`/review-queue?view=compact&page=${page}`);
-      expect(currentUrl()).toBe('/review-queue?view=compact');
+    async (page) => {
+      await renderQueue(`/review-queue?view=compact&page=${page}`);
+      await waitFor(() =>
+        expect(currentUrl()).toBe('/review-queue?view=compact'),
+      );
       expect(screen.getByText('1–10 of 10')).toBeVisible();
     },
   );
 
   it('opens hidden risk signals with the keyboard, closes on Escape and keeps focus on the native trigger', async () => {
     const user = userEvent.setup();
-    renderQueue();
+    await renderQueue();
     const trigger = screen.getByRole('button', {
       name: 'Show 3 more risk signals for case RC-260902-0196',
     });
@@ -215,7 +235,7 @@ describe('Review Queue', () => {
 
   it('keeps only one row risk disclosure open, toggles it and dismisses it on outside interaction', async () => {
     const user = userEvent.setup();
-    renderQueue();
+    await renderQueue();
     const first = screen.getByRole('button', {
       name: 'Show 1 more risk signals for case RC-260902-0184',
     });
@@ -235,30 +255,31 @@ describe('Review Queue', () => {
     expect(screen.queryByRole('list')).not.toBeInTheDocument();
   });
 
-  it('keeps pending data stable until activation, then inserts in operational order with a temporary presentation state', () => {
-    vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout'] });
-    renderQueue('/review-queue?view=compact');
+  it('keeps pending data stable until activation, then inserts in operational order with a temporary presentation state', async () => {
+    await renderQueue('/review-queue?view=compact');
     const originalIds = queueCaseIds();
-    act(() => vi.advanceTimersByTime(60_000));
     expect(queueCaseIds()).toEqual(originalIds);
     expect(screen.queryByText('RC-260902-0241')).not.toBeInTheDocument();
     const before = currentUrl();
     // This test owns the clock and checks timer lifecycle with one synchronous
     // activation. The filter/incoming integration tests use real user-event clicks.
+    const timeout = vi.spyOn(globalThis, 'setTimeout');
     fireEvent.click(screen.getByRole('button', { name: '1 new case' }));
-    expect(queueCaseIds()).toEqual([
-      'RC-260902-0184',
-      'RC-260902-0189',
-      'RC-260902-0241',
-      'RC-260902-0196',
-      'RC-260902-0201',
-      'RC-260902-0207',
-      'RC-260902-0212',
-      'RC-260902-0219',
-      'RC-260902-0225',
-      'RC-260902-0231',
-      'RC-260902-0237',
-    ]);
+    await waitFor(() =>
+      expect(queueCaseIds()).toEqual([
+        'RC-260902-0184',
+        'RC-260902-0189',
+        'RC-260902-0241',
+        'RC-260902-0196',
+        'RC-260902-0201',
+        'RC-260902-0207',
+        'RC-260902-0212',
+        'RC-260902-0219',
+        'RC-260902-0225',
+        'RC-260902-0231',
+        'RC-260902-0237',
+      ]),
+    );
     expect(currentUrl()).toBe(before);
     expect(
       screen.queryByRole('button', { name: '1 new case' }),
@@ -267,7 +288,9 @@ describe('Review Queue', () => {
     const row = screen.getByRole('row', { name: /RC-260902-0241/ });
     // Only the presentation flag is tested, not pixel color or animation timing.
     expect(row).toHaveClass(styles.highlightedRow);
-    act(() => vi.runOnlyPendingTimers());
+    const expiration = timeout.mock.calls.find((call) => call[1] === 1800)?.[0];
+    expect(expiration).toBeTypeOf('function');
+    act(() => (expiration as () => void)());
     expect(row).not.toHaveClass(styles.highlightedRow);
     expect(screen.getByText('1–11 of 11')).toBeVisible();
     expect(screen.getByRole('button', { name: 'Previous' })).toBeDisabled();
@@ -276,7 +299,7 @@ describe('Review Queue', () => {
 
   it('keeps an incorporated case filtered out until controls allow it, without rewriting the URL', async () => {
     const user = userEvent.setup();
-    renderQueue(
+    await renderQueue(
       '/review-queue?scope=my_reviews&risk=new_recipient&view=compact',
     );
     expect(queueCaseIds()).toEqual(['RC-260902-0207']);
@@ -291,11 +314,11 @@ describe('Review Queue', () => {
 
   it('includes an incoming case that matches the active search without clearing that search', async () => {
     const user = userEvent.setup();
-    renderQueue('/review-queue?q=Лазарева');
+    await renderQueue('/review-queue?q=Лазарева');
     expect(screen.getByText('0 of 0')).toBeVisible();
     const before = currentUrl();
     await user.click(screen.getByRole('button', { name: '1 new case' }));
-    expect(queueCaseIds()).toEqual(['RC-260902-0241']);
+    await waitFor(() => expect(queueCaseIds()).toEqual(['RC-260902-0241']));
     expect(screen.getByRole('searchbox')).toHaveValue('Лазарева');
     expect(currentUrl()).toBe(before);
     expect(screen.getByText('1–1 of 1')).toBeVisible();
