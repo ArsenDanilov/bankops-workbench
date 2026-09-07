@@ -11,6 +11,7 @@ import {
   incorporateMockIncomingCase,
   readMockReviewQueue,
 } from './reviewQueueState';
+import { readMockReviewCaseDetails } from './reviewCaseDetailsState';
 
 const positiveInteger = (value: string | null) =>
   value !== null && /^[1-9]\d*$/.test(value) ? Number(value) : null;
@@ -60,4 +61,18 @@ export const reviewQueueHandlers = [
   }),
 ];
 
-export const handlers = [...reviewQueueHandlers];
+export const reviewCaseDetailsHandlers = [
+  http.get('/api/review-cases/:caseId', async ({ params }) => {
+    const caseId = String(params.caseId ?? '');
+    const mock = readMockReviewCaseDetails();
+    await delay(mock.latencyMs);
+    if (caseId !== mock.canonical.case.id)
+      return HttpResponse.json(
+        { message: 'Review case not found' },
+        { status: 404 },
+      );
+    return HttpResponse.json(mock.canonical);
+  }),
+];
+
+export const handlers = [...reviewQueueHandlers, ...reviewCaseDetailsHandlers];

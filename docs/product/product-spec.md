@@ -11,8 +11,9 @@ The unit of work is a **ReviewCase**, not a client or an isolated operation scre
 - Case History → Review Case Workspace (read-only).
 - No Dashboard, Client Profile or separate Operation Details destination.
 
-This is the approved product direction, not a list of implemented routes. Today
-only Review Queue is implemented; Workspace and Case History remain future work.
+This is the approved product direction, not a list of implemented routes. Review
+Queue and the minimal W1 Workspace data-foundation route are implemented; the
+full Workspace experience and Case History remain future work.
 
 ## Decisions and ownership
 
@@ -41,7 +42,8 @@ for the Workspace's decision-readiness contexts.
 
 ## Current implementation boundary
 
-The Queue uses a typed async API backed by deterministic MSW fixtures in local
-development; it still has no real server persistence, claim/release/block
-execution, Workspace navigation or history. Product decisions
-above must not be treated as authorization to implement those features now.
+The Queue and minimal Workspace details route use typed async APIs backed by
+deterministic MSW fixtures in local development. There is still no real server
+persistence, claim/release/block execution, final Workspace layout, Queue return
+context or history. Product decisions above must not be treated as authorization
+to implement those features now.

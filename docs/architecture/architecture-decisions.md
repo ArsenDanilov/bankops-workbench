@@ -6,8 +6,9 @@
   (`package.json` specifies `>=24 <25`).
 - React Router v7 **Declarative Mode**: `BrowserRouter`, `Routes`, `Route`, and
   `Navigate`. `/` redirects to `/review-queue` with replace. AppShell owns the
-  layout; Review Queue is the only implemented destination. No Data Router,
-  framework-mode routing, Workspace route or Case History route yet.
+  layout. Review Queue and the deep-linkable `/review-cases/:caseId` Workspace
+  data-foundation route are implemented. No Data Router, framework-mode routing
+  or Case History route.
 - CSS Modules for component styles; application-level reset/globals and CSS custom
   properties for semantic tokens. No Tailwind or CSS-in-JS.
 - Native semantic HTML table with explicit column geometry. No TanStack Table,
@@ -27,6 +28,14 @@
 - `ReviewQueueItem` is the typed Queue projection, not a full ReviewCase model.
   It separates lifecycle, ownership, SLA state and risk signals/score, with IDs,
   timestamps, amount/currency and display names needed by the Queue.
+- Workspace uses a separate grouped `ReviewCaseDetails` read projection. Its
+  nested `ReviewCase` aggregate carries lifecycle/version/ownership references
+  and a discriminated decision; OperationContext, immutable RiskAssessment,
+  behavior, recipient, conditional device/location and Transaction History
+  descriptor remain explicit context boundaries. Queue types are unchanged.
+- Context requirement/availability is server data and is distinct from HTTP
+  loading/failure. Decision readiness is a server-authored ready/blocked result;
+  the frontend does not infer it from risk score or signal count.
 - Native `fetch` calls the typed `/api/review-cases` collection boundary and
   forwards TanStack Query's AbortSignal. Lightweight runtime parsing validates
   the response envelope and Queue projection fields; no schema library exists.
@@ -38,14 +47,19 @@
 - No Redux/Zustand or other global client state store. Avoid premature shared
   abstractions, generic UI-kit components and speculative domain models.
 
-## Async data boundary — M10
+## Async data boundaries — M10 and W1
 
-M10 implements TanStack Query, native fetch and MSW for Review Queue only. MSW
+M10 implements TanStack Query, native fetch and MSW for Review Queue. W1 extends
+the same boundary with `GET /api/review-cases/:caseId`, the stable
+`['review-cases', 'detail', caseId]` query key and a canonical detailed fixture.
+404 remains distinct from transport failure; a bounded transient GET retry and
+manual Retry are implemented, and AbortSignal reaches native fetch. MSW
 starts once at the application boundary in local development and once through
 central Vitest lifecycle hooks in tests; feature components do not know the
-transport is mocked. Production builds contain the API client but do not start a
-mock worker. There is no Axios, backend, persistence, authentication, global
-client store, polling, SSE or WebSocket. Workspace APIs remain future work.
+transport is mocked. Production builds contain the API clients but do not start
+a mock worker. The details response includes only a Transaction History
+descriptor, not rows. There is no Claim/Decision API, Axios, backend, persistence,
+authentication, global client store, polling, SSE or WebSocket.
 
 ## Testing and quality roadmap
 
@@ -67,10 +81,10 @@ client store, polling, SSE or WebSocket. Workspace APIs remain future work.
   required. Test code and configuration participate in TypeScript checking.
 - GitHub Actions runs a single Node 24 job for pushes and pull requests:
   `npm ci` → lint → typecheck → test → build. No deployment or coverage service.
-- M9 is human-accepted and present on the main development line. M10 implements
-  the separately approved Queue async-data milestone. Review Case Workspace
-  Visual Design remains the recommended next milestone after human acceptance;
-  E2E/final quality remains later backlog work.
+- M9 and M10 are human-accepted and present on the main development line. W1
+  implements only the separately approved Workspace route/data foundation. W2 —
+  Workspace Structural Layout + First-Fold Evidence remains the recommended next
+  milestone after human acceptance; E2E/final quality remains later backlog work.
 - Visible UI changes require browser self-review at the relevant specification's
   viewport, including console, keyboard, states and material fallbacks.
 - Every milestone ends with factual verification and a standardized

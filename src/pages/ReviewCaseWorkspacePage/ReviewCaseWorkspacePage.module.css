@@ -1,0 +1,111 @@
+.page {
+  min-height: calc(100vh - 56px);
+  padding: var(--space-6);
+}
+
+.content {
+  width: 100%;
+  max-width: 960px;
+  margin-inline: auto;
+}
+
+.backLink {
+  display: inline-block;
+  margin-block-end: var(--space-5);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+}
+
+.workspace,
+.statePanel {
+  border: var(--border-width-default) solid var(--color-border-subtle);
+  border-radius: var(--radius-lg);
+  background: var(--material-surface-opaque);
+  box-shadow: var(--shadow-subtle);
+}
+
+.workspace {
+  overflow: hidden;
+}
+
+.statePanel {
+  padding: var(--space-8);
+}
+
+.statePanel h1,
+.statePanel p {
+  margin-block-end: var(--space-3);
+}
+
+.header {
+  padding: var(--space-8);
+  border-bottom: var(--border-width-default) solid var(--color-border-subtle);
+}
+
+.eyebrow {
+  margin-block-end: var(--space-2);
+  color: var(--color-text-muted);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.summary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-6);
+  margin: var(--space-5) 0 0;
+}
+
+.summary div {
+  min-width: 120px;
+}
+
+.summary dt {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-xs);
+}
+
+.summary dd {
+  margin: var(--space-1) 0 0;
+  color: var(--color-text-primary);
+  font-weight: var(--font-weight-medium);
+}
+
+.section {
+  padding: var(--space-6) var(--space-8);
+  border-bottom: var(--border-width-default) solid var(--color-border-subtle);
+}
+
+.section:last-child {
+  border-bottom: 0;
+}
+
+.section h2 {
+  margin-block-end: var(--space-2);
+}
+
+.primaryValue {
+  margin: 0;
+  color: var(--color-text-primary);
+  font-variant-numeric: tabular-nums;
+  font-weight: var(--font-weight-semibold);
+}
+
+.retryButton {
+  min-height: 34px;
+  padding-inline: var(--space-4);
+  border: var(--border-width-default) solid var(--color-accent-border);
+  border-radius: var(--radius-sm);
+  background: var(--color-accent-subtle);
+  color: var(--color-accent);
+  cursor: pointer;
+  font: inherit;
+  font-weight: var(--font-weight-medium);
+}
+
+.retryButton:hover {
+  border-color: var(--color-accent);
+  color: var(--color-accent-hover);
+}
