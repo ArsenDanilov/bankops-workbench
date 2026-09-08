@@ -42,8 +42,9 @@ for the Workspace's decision-readiness contexts.
 
 ## Current implementation boundary
 
-The Queue and minimal Workspace details route use typed async APIs backed by
-deterministic MSW fixtures in local development. There is still no real server
-persistence, claim/release/block execution, final Workspace layout, Queue return
-context or history. Product decisions above must not be treated as authorization
-to implement those features now.
+The Queue and first-fold Workspace use typed async APIs backed by deterministic
+MSW fixtures in local development. The Workspace includes contextual navigation
+inside already-authorized evidence, but there is still no real server
+persistence, claim/release/block execution, Queue return context or Transaction
+History data. Product decisions above must not be treated as authorization to
+implement those features now.
