@@ -1,30 +1,28 @@
 # Current implementation milestone
 
 Current milestone:
-W2 — Workspace Structural Layout + First-Fold Evidence
+W3 — Review Case Workspace Evidence Grammar + Risk Navigation
 
 Status: NEEDS_REVIEW
 
-Report: docs/reports/W2-workspace-first-fold.md
+Report: docs/reports/W3-workspace-evidence-navigation.md
 
 ## Approved assignment
 
-The human supplied and approved the complete W2 implementation prompt. Review
-Queue M1–M10 and W1 are accepted. Implement only the Workspace structural layout
-and canonical first-fold evidence described by that dedicated prompt.
+The human supplied and approved the complete W3 implementation prompt and
+confirmed W1/W2 acceptance. Implement only the amount baseline comparison,
+frontend-only Risk → Evidence navigation, focus/acknowledgment behavior and
+fixed-height 4–5 signal disclosure described by that prompt.
 
-Synchronize the accepted Workspace visual specification, replace W1's minimal
-success surface with the exact 1008/24/360 desktop composition, and render the
-canonical Operation, Risk, Behavior, Recipient, Device, Transaction History
-boundary and structural Decision Rail from the W1 query. Preserve W1 async states
-and Review Queue behavior. Do not implement decision controls, History rows,
-Risk navigation or later scenarios.
+Preserve the accepted 1008/24/360 desktop composition, immutable risk snapshots,
+W1 async states, structural-only Decision Rail, Transaction History boundary and
+Review Queue behavior. Add no dependency and do not implement History data,
+Decision workflow, missing-context variants or later scenarios.
 
-No dependencies were added. Implementation, focused localhost browser review,
-and the full quality gate are complete. The milestone is awaiting human review;
-only a human may mark it ACCEPTED.
+Implementation, detailed localhost review and the full quality gate are
+complete. W3 is awaiting human review; only a human may mark it ACCEPTED.
 
 ## Next milestone boundary
 
-If W2 is human-accepted, recommend
-**W3 — Evidence Grammar + Risk Navigation**. Do not implement it in this task.
+If W3 is human-accepted, recommend **W4 — Transaction History Boundary**.
+Do not implement it in this task.

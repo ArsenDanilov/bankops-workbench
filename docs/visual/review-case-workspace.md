@@ -126,13 +126,36 @@ Context, Transaction History and Decision use ordered headings. The Decision Rai
 is a complementary `<aside>`. DOM reading order follows the visual grid, and
 sections do not become unnecessary ARIA landmarks.
 
-## Deferred after W2
+## W3 evidence grammar and navigation
 
-- W3: amount comparison visualization, Risk → Evidence navigation and final
-  progressive disclosure for 4–5 signals.
+Customer Behavior adds a Workspace-specific textual-values-plus-lane comparison.
+The lane positions amounts linearly against a presentation maximum of 1.5 times
+the authoritative typical upper bound. The typical range and median remain
+neutral reference marks. Amounts beyond that capped extension sit at the visual
+edge with explicit `Off scale` text; the edge is not a numeric claim. Current,
+median, typical range and deviation remain the primary accessible text.
+
+Risk signals retain their immutable server snapshot and add explicit Workspace
+links through one frontend-only risk-code mapping. Canonical destinations are
+`behavior-amount`, `recipient-relationship` and `device-context`; activity and
+future Location mappings are also centralized, but a link renders only when its
+destination exists. Activation focuses the target, scrolls only when needed,
+uses a 72px CSS scroll margin, and applies a restrained 900ms violet
+acknowledgment. Reduced-motion preference selects immediate scrolling and a
+static acknowledgment during that interval.
+
+Risk Assessment renders one to three signals fully. Four or five signals keep
+the 248px region fixed: the first three remain inline and `+N more signals`
+opens a non-modal disclosure for the remainder. The native button exposes
+`aria-expanded`/`aria-controls`; Escape closes and restores trigger focus,
+outside pointer interaction closes, and disclosure content remains keyboard
+reachable without a focus trap.
+
+## Deferred after W3
+
 - W4: Transaction History request and rows.
 - Later milestones: missing-context treatment, queued/other-analyst/terminal
   states, Claim, Release/Block form, mutation/concurrency handling, Case History.
 - Responsive/mobile Workspace behavior and Inter reconciliation.
 
-None of these deferred capabilities is implemented by W2.
+None of these deferred capabilities is implemented by W3.

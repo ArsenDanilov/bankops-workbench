@@ -315,11 +315,19 @@
   margin-block-start: var(--space-3);
 }
 
+.riskSection {
+  position: relative;
+}
+
 .riskSignal {
   display: grid;
   grid-template-columns: 2px minmax(0, 1fr);
   gap: var(--space-3);
   min-height: 42px;
+}
+
+.riskSignal > div {
+  min-width: 0;
 }
 
 .riskMarker {
@@ -336,7 +344,16 @@
   line-height: 18px;
 }
 
-.riskSignal p {
+.riskEvidenceLine {
+  display: flex;
+  min-width: 0;
+  align-items: baseline;
+  gap: var(--space-3);
+}
+
+.riskEvidenceLine p {
+  flex: 1;
+  min-width: 0;
   margin: 0;
   overflow: hidden;
   color: var(--color-text-secondary);
@@ -346,20 +363,74 @@
   white-space: nowrap;
 }
 
-.metrics {
+.riskEvidenceLine a {
+  flex: none;
+  color: var(--color-accent);
+  font-size: 0.6875rem;
+  font-weight: var(--font-weight-medium);
+  line-height: 16px;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.riskEvidenceLine a:hover {
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.riskDisclosure {
+  position: absolute;
+  right: 24px;
+  bottom: 12px;
+  z-index: 2;
+}
+
+.riskDisclosure > button {
+  min-height: 24px;
+  padding: 0 var(--space-2);
+  border: var(--border-width-default) solid var(--color-accent-border);
+  border-radius: var(--radius-sm);
+  background: var(--material-surface-opaque);
+  color: var(--color-accent);
+  cursor: pointer;
+  font: inherit;
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+}
+
+.riskDisclosurePanel {
+  position: absolute;
+  right: 0;
+  bottom: calc(100% + var(--space-2));
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: var(--space-4);
-  margin: var(--space-4) 0 0;
+  width: 360px;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  border: var(--border-width-default) solid var(--color-border-default);
+  border-radius: var(--radius-md);
+  background: var(--material-surface-opaque);
+  box-shadow: var(--shadow-subtle);
 }
 
-.metrics div,
-.relationshipMetrics div,
-.decisionFacts div {
-  min-width: 0;
+.amountComparison {
+  margin-block-start: var(--space-2);
 }
 
-.metrics dt,
+.amountCurrent {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+.amountCurrent > :first-child {
+  display: flex;
+  flex-direction: column;
+}
+
+.metricLabel,
+.baselineMetrics dt,
+.activityMetrics dt,
 .relationshipMetrics dt,
 .decisionFacts dt {
   color: var(--color-text-muted);
@@ -367,7 +438,89 @@
   line-height: 16px;
 }
 
-.metrics dd,
+.amountCurrent strong {
+  color: var(--color-text-primary);
+  font-size: var(--font-size-md);
+  font-variant-numeric: tabular-nums;
+  font-weight: var(--font-weight-semibold);
+  line-height: 18px;
+}
+
+.offScale {
+  padding: 1px var(--space-2);
+  border: var(--border-width-default) solid var(--color-border-default);
+  border-radius: 999px;
+  color: var(--color-text-secondary);
+  font-size: 0.6875rem;
+  font-weight: var(--font-weight-semibold);
+  line-height: 16px;
+  white-space: nowrap;
+}
+
+.amountLane {
+  position: relative;
+  height: 16px;
+  margin-block-start: 6px;
+}
+
+.amountTrack,
+.typicalRangeBand,
+.medianMarker,
+.currentMarker {
+  position: absolute;
+}
+
+.amountTrack {
+  top: 7px;
+  right: 0;
+  left: 0;
+  height: 2px;
+  background: var(--color-border-default);
+}
+
+.typicalRangeBand {
+  top: 4px;
+  height: 8px;
+  border-radius: 4px;
+  background: var(--color-bg-surface-subtle);
+  box-shadow: inset 0 0 0 var(--border-width-default) var(--color-border-strong);
+}
+
+.medianMarker {
+  top: 2px;
+  width: 2px;
+  height: 12px;
+  background: var(--color-text-muted);
+  transform: translateX(-1px);
+}
+
+.currentMarker {
+  top: 1px;
+  width: 6px;
+  height: 14px;
+  border: 2px solid var(--material-surface-opaque);
+  border-radius: 3px;
+  background: var(--color-text-primary);
+  box-shadow: 0 0 0 1px var(--color-border-strong);
+  transform: translateX(-3px);
+}
+
+.baselineMetrics {
+  display: grid;
+  grid-template-columns: 0.8fr 1.5fr 0.6fr;
+  gap: var(--space-4);
+  margin: 6px 0 0;
+}
+
+.baselineMetrics div,
+.activityMetrics div,
+.relationshipMetrics div,
+.decisionFacts div {
+  min-width: 0;
+}
+
+.baselineMetrics dd,
+.activityMetrics dd,
 .relationshipMetrics dd,
 .decisionFacts dd {
   margin: var(--space-1) 0 0;
@@ -378,8 +531,47 @@
   line-height: 18px;
 }
 
-.metrics dd {
+.baselineMetrics dd,
+.activityMetrics dd {
   white-space: nowrap;
+}
+
+.activityMetrics {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-4);
+  margin: var(--space-2) 0 0;
+}
+
+.evidenceTarget {
+  scroll-margin-top: 72px;
+}
+
+.evidenceTarget:focus-visible {
+  border-radius: var(--radius-sm);
+  outline: var(--focus-ring-width) solid var(--color-focus-ring);
+  outline-offset: var(--focus-ring-offset);
+}
+
+.evidenceTargetActive {
+  animation: evidence-target-acknowledgment 900ms ease-out;
+}
+
+@keyframes evidence-target-acknowledgment {
+  0%,
+  70% {
+    background: color-mix(
+      in srgb,
+      var(--color-evidence-fraud) 10%,
+      transparent
+    );
+    box-shadow: inset 3px 0 0 var(--color-evidence-fraud);
+  }
+
+  100% {
+    background: transparent;
+    box-shadow: inset 3px 0 0 transparent;
+  }
 }
 
 .relationshipState {
@@ -614,5 +806,17 @@
     background: var(--material-toolbar-opaque);
     -webkit-backdrop-filter: none;
     backdrop-filter: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .evidenceTargetActive {
+    animation: none;
+    background: color-mix(
+      in srgb,
+      var(--color-evidence-fraud) 10%,
+      transparent
+    );
+    box-shadow: inset 3px 0 0 var(--color-evidence-fraud);
   }
 }

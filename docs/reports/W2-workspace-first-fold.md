@@ -2,7 +2,9 @@
 
 ## Status
 
-NEEDS_REVIEW
+ACCEPTED
+
+Human acceptance was confirmed in the approved W3 assignment.
 
 ## Goal
 

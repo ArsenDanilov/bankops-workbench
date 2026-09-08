@@ -2,10 +2,10 @@
 
 ## Status
 
-NEEDS_REVIEW
+ACCEPTED
 
-W1 implementation and autonomous verification are complete. Human acceptance is
-pending; W1 is not marked `ACCEPTED`.
+W1 implementation and autonomous verification are complete. Human acceptance
+was confirmed in the approved W3 assignment.
 
 ## Goal
 

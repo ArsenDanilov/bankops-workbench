@@ -76,6 +76,21 @@ evidence copy remains part of the immutable server snapshot. No History query,
 Decision mutation, local readiness inference, UI navigation anchor or new state
 library is introduced.
 
+## Workspace evidence navigation — W3
+
+W3 adds only Workspace-local presentation behavior. A pure helper maps
+authoritative amount values onto a capped comparison lane; it does not calculate
+backend risk analytics. One frontend mapping owns risk code → rendered evidence
+destination and explicit link wording. `RiskSignal` domain/API objects remain
+unchanged and contain no UI IDs.
+
+Native anchors, `scroll-margin-top`, focusable destination wrappers and short
+local acknowledgment state implement contextual navigation without a
+router/global-state/scrolling dependency. Risk overflow is local non-modal
+disclosure state: the first three signals remain in the fixed row and only the
+fourth/fifth appear in the overlay. No History request or Decision mutation is
+introduced.
+
 ## Testing and quality roadmap
 
 - Existing checks: ESLint (`npm run lint`), TypeScript (`npm run typecheck`),
@@ -96,10 +111,9 @@ library is introduced.
   required. Test code and configuration participate in TypeScript checking.
 - GitHub Actions runs a single Node 24 job for pushes and pull requests:
   `npm ci` → lint → typecheck → test → build. No deployment or coverage service.
-- M9 and M10 are human-accepted and present on the main development line. W1
-  implements only the separately approved Workspace route/data foundation. W2 —
-  Workspace Structural Layout + First-Fold Evidence remains the recommended next
-  milestone after human acceptance; E2E/final quality remains later backlog work.
+- M9, M10, W1 and W2 are human-accepted and present on the main development
+  line. W3 implements the separately approved Workspace evidence grammar and
+  risk navigation milestone; E2E/final quality remains later backlog work.
 - Visible UI changes require browser self-review at the relevant specification's
   viewport, including console, keyboard, states and material fallbacks.
 - Every milestone ends with factual verification and a standardized

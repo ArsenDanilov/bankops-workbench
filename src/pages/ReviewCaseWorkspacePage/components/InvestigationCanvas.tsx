@@ -1,17 +1,19 @@
+import { useEffect, useRef, useState } from 'react';
 import type {
   CustomerBehaviorContext,
   DeviceContext,
   OperationContext,
   RecipientRelationship,
   ReviewCaseDetails,
-  RiskAssessment,
 } from '../model/reviewCase.types';
 import {
   formatWorkspaceAmount,
   formatWorkspaceTime,
   isSameWorkspaceDay,
-  riskSignalLabels,
 } from '../lib/workspaceFormatters';
+import type { EvidenceDestinationId } from '../lib/evidenceNavigation';
+import { AmountBaselineComparison } from './AmountBaselineComparison';
+import { RiskAssessmentSection } from './RiskAssessmentSection';
 import styles from '../ReviewCaseWorkspacePage.module.css';
 
 const SectionUnavailable = ({ label }: { label: string }) => (
@@ -70,99 +72,43 @@ const OperationSection = ({
   </section>
 );
 
-const RiskAssessmentSection = ({
-  assessment,
-}: {
-  assessment: RiskAssessment | null;
-}) => (
-  <section className={styles.evidenceSection}>
-    <div className={styles.sectionHeadingRow}>
-      <h2 className={styles.sectionTitle}>Risk Assessment</h2>
-      {assessment ? (
-        <p className={styles.riskMeta}>
-          Score {assessment.score} · Assessed{' '}
-          {formatWorkspaceTime(assessment.assessedAt)}
-        </p>
-      ) : null}
-    </div>
-    {assessment ? (
-      <div className={styles.riskSignals}>
-        {assessment.signals.map((signal) => (
-          <div className={styles.riskSignal} key={signal.code}>
-            <span className={styles.riskMarker} aria-hidden="true" />
-            <div>
-              <h3>{riskSignalLabels[signal.code]}</h3>
-              <p>{signal.evidenceSnapshot.summary}</p>
-            </div>
-          </div>
-        ))}
-      </div>
-    ) : (
-      <SectionUnavailable label="Risk Assessment" />
-    )}
-  </section>
-);
-
 const BehaviorSection = ({
   behavior,
+  activeDestinationId,
 }: {
   behavior: CustomerBehaviorContext | null;
+  activeDestinationId: EvidenceDestinationId | null;
 }) => (
   <section className={styles.evidenceSection}>
     <h2 className={styles.sectionTitle}>Customer Behavior</h2>
     {behavior ? (
-      <dl className={styles.metrics}>
-        <div>
-          <dt>Current</dt>
-          <dd>
-            {formatWorkspaceAmount(
-              behavior.amounts.current,
-              behavior.amounts.currency,
-            )}
-          </dd>
-        </div>
-        <div>
-          <dt>90d median</dt>
-          <dd>
-            {formatWorkspaceAmount(
-              behavior.amounts.median90d,
-              behavior.amounts.currency,
-            )}
-          </dd>
-        </div>
-        <div>
-          <dt>Typical range</dt>
-          <dd>
-            {formatWorkspaceAmount(
-              behavior.amounts.typicalRange.minimum,
-              behavior.amounts.currency,
-            )}
-            –
-            {formatWorkspaceAmount(
-              behavior.amounts.typicalRange.maximum,
-              behavior.amounts.currency,
-            )}
-          </dd>
-        </div>
-        <div>
-          <dt>Deviation</dt>
-          <dd>×{behavior.amounts.deviationMultiplier}</dd>
-        </div>
-        <div>
-          <dt>Recent outgoing</dt>
-          <dd>
-            {behavior.activity.recentOutgoingTransfers.last24Hours} / 24h ·{' '}
-            {behavior.activity.recentOutgoingTransfers.last7Days} / 7d
-          </dd>
-        </div>
-        <div>
-          <dt>Usual frequency</dt>
-          <dd>
-            {behavior.activity.usualFrequency.minimum}–
-            {behavior.activity.usualFrequency.maximum} / week
-          </dd>
-        </div>
-      </dl>
+      <>
+        <AmountBaselineComparison
+          amounts={behavior.amounts}
+          isActive={activeDestinationId === 'behavior-amount'}
+        />
+        <dl className={styles.activityMetrics}>
+          <div
+            id="behavior-activity"
+            className={`${styles.evidenceTarget} ${activeDestinationId === 'behavior-activity' ? styles.evidenceTargetActive : ''}`}
+            tabIndex={-1}
+            aria-label="Recent activity context"
+          >
+            <dt>Recent outgoing</dt>
+            <dd>
+              {behavior.activity.recentOutgoingTransfers.last24Hours} / 24h ·{' '}
+              {behavior.activity.recentOutgoingTransfers.last7Days} / 7d
+            </dd>
+          </div>
+          <div>
+            <dt>Usual frequency</dt>
+            <dd>
+              {behavior.activity.usualFrequency.minimum}–
+              {behavior.activity.usualFrequency.maximum} / week
+            </dd>
+          </div>
+        </dl>
+      </>
     ) : (
       <SectionUnavailable label="Customer behavior" />
     )}
@@ -172,12 +118,20 @@ const BehaviorSection = ({
 const RecipientRelationshipSection = ({
   relationship,
   caseCreatedAt,
+  isActive,
 }: {
   relationship: RecipientRelationship | null;
   caseCreatedAt: string;
+  isActive: boolean;
 }) => (
   <section className={styles.evidenceSection}>
-    <h2 className={styles.sectionTitle}>Recipient Relationship</h2>
+    <h2
+      id="recipient-relationship"
+      className={`${styles.sectionTitle} ${styles.evidenceTarget} ${isActive ? styles.evidenceTargetActive : ''}`}
+      tabIndex={-1}
+    >
+      Recipient Relationship
+    </h2>
     {relationship ? (
       relationship.relationship === 'new' ? (
         <div className={styles.relationshipContent}>
@@ -212,9 +166,21 @@ const RecipientRelationshipSection = ({
   </section>
 );
 
-const DeviceContextSection = ({ device }: { device: DeviceContext }) => (
+const DeviceContextSection = ({
+  device,
+  isActive,
+}: {
+  device: DeviceContext;
+  isActive: boolean;
+}) => (
   <section className={styles.deviceSection}>
-    <h2 className={styles.sectionTitle}>Device Context</h2>
+    <h2
+      id="device-context"
+      className={`${styles.sectionTitle} ${styles.evidenceTarget} ${isActive ? styles.evidenceTargetActive : ''}`}
+      tabIndex={-1}
+    >
+      Device Context
+    </h2>
     <div className={styles.deviceComparison}>
       <p>
         <span className={styles.fieldLabel}>Current</span>
@@ -258,6 +224,9 @@ export const InvestigationCanvas = ({
 }: {
   details: ReviewCaseDetails;
 }) => {
+  const [activeDestinationId, setActiveDestinationId] =
+    useState<EvidenceDestinationId | null>(null);
+  const acknowledgmentTimer = useRef<number | undefined>(undefined);
   const operation = details.contexts.operation;
   const risk = details.contexts.riskAssessment;
   const behavior = details.contexts.customerBehavior;
@@ -265,6 +234,52 @@ export const InvestigationCanvas = ({
   const device = details.contexts.device;
   const hasDevice =
     device.requirement === 'required' && device.availability === 'available';
+  const renderedDestinationIds = new Set<EvidenceDestinationId>();
+
+  if (behavior.availability === 'available') {
+    renderedDestinationIds.add('behavior-amount');
+    renderedDestinationIds.add('behavior-activity');
+  }
+  if (recipient.availability === 'available') {
+    renderedDestinationIds.add('recipient-relationship');
+  }
+  if (hasDevice) renderedDestinationIds.add('device-context');
+
+  useEffect(
+    () => () => {
+      if (acknowledgmentTimer.current !== undefined)
+        window.clearTimeout(acknowledgmentTimer.current);
+    },
+    [],
+  );
+
+  const navigateToEvidence = (destinationId: EvidenceDestinationId) => {
+    const destination = document.getElementById(destinationId);
+    if (!destination) return;
+
+    if (acknowledgmentTimer.current !== undefined)
+      window.clearTimeout(acknowledgmentTimer.current);
+
+    setActiveDestinationId(destinationId);
+    destination.focus({ preventScroll: true });
+
+    const bounds = destination.getBoundingClientRect();
+    const isVisible = bounds.top >= 72 && bounds.bottom <= window.innerHeight;
+    if (!isVisible && typeof destination.scrollIntoView === 'function') {
+      const reducedMotion =
+        typeof window.matchMedia === 'function' &&
+        window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      destination.scrollIntoView({
+        behavior: reducedMotion ? 'auto' : 'smooth',
+        block: 'start',
+      });
+    }
+
+    acknowledgmentTimer.current = window.setTimeout(
+      () => setActiveDestinationId(null),
+      900,
+    );
+  };
 
   return (
     <div className={styles.investigationCanvas}>
@@ -277,6 +292,8 @@ export const InvestigationCanvas = ({
         <div className={styles.verticalDivider} aria-hidden="true" />
         <RiskAssessmentSection
           assessment={risk.availability === 'available' ? risk.data : null}
+          renderedDestinationIds={renderedDestinationIds}
+          onNavigate={navigateToEvidence}
         />
       </div>
       <div className={styles.horizontalDivider} aria-hidden="true" />
@@ -285,6 +302,7 @@ export const InvestigationCanvas = ({
           behavior={
             behavior.availability === 'available' ? behavior.data : null
           }
+          activeDestinationId={activeDestinationId}
         />
         <div className={styles.verticalDivider} aria-hidden="true" />
         <RecipientRelationshipSection
@@ -292,12 +310,16 @@ export const InvestigationCanvas = ({
             recipient.availability === 'available' ? recipient.data : null
           }
           caseCreatedAt={details.case.createdAt}
+          isActive={activeDestinationId === 'recipient-relationship'}
         />
       </div>
       {hasDevice ? (
         <>
           <div className={styles.horizontalDivider} aria-hidden="true" />
-          <DeviceContextSection device={device.data} />
+          <DeviceContextSection
+            device={device.data}
+            isActive={activeDestinationId === 'device-context'}
+          />
         </>
       ) : null}
       <TransactionHistoryBoundary details={details} />
