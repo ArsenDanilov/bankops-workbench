@@ -61,6 +61,21 @@ a mock worker. The details response includes only a Transaction History
 descriptor, not rows. There is no Claim/Decision API, Axios, backend, persistence,
 authentication, global client store, polling, SSE or WebSocket.
 
+## Workspace presentation boundary — W2
+
+W2 keeps the W1 route/query/API/MSW boundary and replaces only its intentionally
+minimal success rendering. Workspace-local components compose Case Orientation,
+one solid Investigation Canvas and a sticky complementary Decision Rail. The
+canvas owns fixed first-fold section geometry; the rail is a 360px functional
+foreground with an opaque fallback and supported blur enhancement. No generic
+Card/panel system or second visual system exists.
+
+The details projection now includes server-authored SLA orientation data and
+explicit 24h/7d recent-activity counts required by the accepted first fold. Risk
+evidence copy remains part of the immutable server snapshot. No History query,
+Decision mutation, local readiness inference, UI navigation anchor or new state
+library is introduced.
+
 ## Testing and quality roadmap
 
 - Existing checks: ESLint (`npm run lint`), TypeScript (`npm run typecheck`),

@@ -18,6 +18,11 @@ export const canonicalReviewCaseDetails = {
     analystId: 'analyst-current',
     analystDisplayName: 'Current analyst',
   },
+  sla: {
+    state: 'due_soon',
+    dueAt: '2026-09-07T13:42:00+03:00',
+    remainingMinutes: 11,
+  },
   contexts: {
     operation: {
       requirement: 'required',
@@ -47,27 +52,27 @@ export const canonicalReviewCaseDetails = {
       data: {
         id: 'RA-260907-0314-01',
         score: 78,
-        assessedAt: '2026-09-07T13:06:20+03:00',
+        assessedAt: '2026-09-07T13:08:00+03:00',
         signals: [
           {
             code: 'unusual_amount',
             evidenceSnapshot: {
-              summary: 'Current amount is 6.7 times the 90-day median.',
-              capturedAt: '2026-09-07T13:06:20+03:00',
+              summary: '286 000 ₽ is 6.7× above the 90-day median',
+              capturedAt: '2026-09-07T13:08:00+03:00',
             },
           },
           {
             code: 'new_recipient',
             evidenceSnapshot: {
-              summary: 'No previous successful transfer to this recipient.',
-              capturedAt: '2026-09-07T13:06:20+03:00',
+              summary: 'No previous successful transfers',
+              capturedAt: '2026-09-07T13:08:00+03:00',
             },
           },
           {
             code: 'device_change',
             evidenceSnapshot: {
-              summary: 'Current desktop device was first observed today.',
-              capturedAt: '2026-09-07T13:06:20+03:00',
+              summary: 'Current device was first seen today',
+              capturedAt: '2026-09-07T13:08:00+03:00',
             },
           },
         ],
@@ -88,8 +93,7 @@ export const canonicalReviewCaseDetails = {
           deviationMultiplier: 6.7,
         },
         activity: {
-          recentOutgoingTransferCount: 4,
-          recentWindowDays: 7,
+          recentOutgoingTransfers: { last24Hours: 1, last7Days: 7 },
           usualFrequency: { minimum: 3, maximum: 5, period: 'week' },
         },
       },
@@ -109,7 +113,7 @@ export const canonicalReviewCaseDetails = {
       data: {
         current: { operatingSystem: 'Windows 11', browser: 'Chrome' },
         firstSeenAt: '2026-09-07T12:58:42+03:00',
-        knownRecentPattern: { device: 'iPhone', channel: 'mobile' },
+        knownRecentPattern: { device: 'iPhone 15', channel: 'mobile' },
       },
     },
     location: {

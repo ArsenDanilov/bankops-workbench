@@ -58,6 +58,18 @@ export type ReviewCaseOwnership =
       analystDisplayName: string;
     };
 
+export type ReviewCaseSla =
+  | {
+      state: 'normal' | 'due_soon';
+      dueAt: string;
+      remainingMinutes: number;
+    }
+  | {
+      state: 'breached';
+      dueAt: string;
+      breachedMinutes: number;
+    };
+
 export type OperationCurrency = 'RUB' | 'EUR' | 'USD';
 export type OperationStatus = 'held' | 'processing' | 'completed' | 'declined';
 
@@ -124,8 +136,10 @@ export interface CustomerBehaviorContext {
     deviationMultiplier: number;
   };
   activity: {
-    recentOutgoingTransferCount: number;
-    recentWindowDays: number;
+    recentOutgoingTransfers: {
+      last24Hours: number;
+      last7Days: number;
+    };
     usualFrequency: {
       minimum: number;
       maximum: number;
@@ -211,6 +225,7 @@ export type DecisionReadiness =
 export interface ReviewCaseDetails {
   case: ReviewCase;
   ownership: ReviewCaseOwnership;
+  sla: ReviewCaseSla;
   contexts: {
     operation: RequiredContext<OperationContext>;
     riskAssessment: RequiredContext<RiskAssessment>;

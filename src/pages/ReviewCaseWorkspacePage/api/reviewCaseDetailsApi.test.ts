@@ -22,6 +22,11 @@ describe('Review Case Workspace API client and MSW backend', () => {
       operationId: 'OP-260907-0718',
     });
     expect(details.ownership.status).toBe('current_analyst');
+    expect(details.sla).toEqual({
+      state: 'due_soon',
+      dueAt: '2026-09-07T13:42:00+03:00',
+      remainingMinutes: 11,
+    });
     expect(details.contexts.operation).toMatchObject({
       requirement: 'required',
       availability: 'available',
@@ -39,6 +44,9 @@ describe('Review Case Workspace API client and MSW backend', () => {
           median90d: 42_600,
           typicalRange: { minimum: 18_000, maximum: 86_000 },
           deviationMultiplier: 6.7,
+        },
+        activity: {
+          recentOutgoingTransfers: { last24Hours: 1, last7Days: 7 },
         },
       },
     });

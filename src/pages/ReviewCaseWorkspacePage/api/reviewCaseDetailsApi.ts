@@ -8,6 +8,7 @@ import {
   type ReviewCase,
   type ReviewCaseDetails,
   type ReviewCaseOwnership,
+  type ReviewCaseSla,
   type RiskAssessment,
   type TransactionHistoryDescriptor,
 } from '../model/reviewCase.types';
@@ -99,6 +100,17 @@ const isReviewCaseOwnership = (
   );
 };
 
+const isReviewCaseSla = (value: unknown): value is ReviewCaseSla => {
+  if (!isObject(value) || !isIsoDate(value.dueAt)) return false;
+  if (value.state === 'normal' || value.state === 'due_soon')
+    return isNumber(value.remainingMinutes) && value.remainingMinutes >= 0;
+  return (
+    value.state === 'breached' &&
+    isNumber(value.breachedMinutes) &&
+    value.breachedMinutes >= 0
+  );
+};
+
 const isCurrency = (value: unknown) =>
   value === 'RUB' || value === 'EUR' || value === 'USD';
 
@@ -153,6 +165,7 @@ const isCustomerBehaviorContext = (
     !isObject(value.amounts) ||
     !isObject(value.amounts.typicalRange) ||
     !isObject(value.activity) ||
+    !isObject(value.activity.recentOutgoingTransfers) ||
     !isObject(value.activity.usualFrequency)
   )
     return false;
@@ -167,8 +180,8 @@ const isCustomerBehaviorContext = (
     isNumber(value.amounts.typicalRange.minimum) &&
     isNumber(value.amounts.typicalRange.maximum) &&
     isNumber(value.amounts.deviationMultiplier) &&
-    isNumber(value.activity.recentOutgoingTransferCount) &&
-    isPositiveInteger(value.activity.recentWindowDays) &&
+    isNumber(value.activity.recentOutgoingTransfers.last24Hours) &&
+    isNumber(value.activity.recentOutgoingTransfers.last7Days) &&
     isNumber(value.activity.usualFrequency.minimum) &&
     isNumber(value.activity.usualFrequency.maximum) &&
     value.activity.usualFrequency.period === 'week'
@@ -263,6 +276,7 @@ const parseReviewCaseDetails = (value: unknown): ReviewCaseDetails => {
     !isObject(value) ||
     !isReviewCase(value.case) ||
     !isReviewCaseOwnership(value.ownership) ||
+    !isReviewCaseSla(value.sla) ||
     !isObject(value.contexts) ||
     !isRequiredContext(value.contexts.operation, isOperationContext) ||
     !isRequiredContext(value.contexts.riskAssessment, isRiskAssessment) ||

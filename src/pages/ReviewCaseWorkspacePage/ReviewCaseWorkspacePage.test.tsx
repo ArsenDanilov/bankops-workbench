@@ -42,17 +42,18 @@ describe('Review Case Workspace route and query states', () => {
     renderRoute();
     expect(
       await screen.findByRole('heading', {
-        name: `Case ${CANONICAL_REVIEW_CASE_ID}`,
+        name: CANONICAL_REVIEW_CASE_ID,
         level: 1,
       }),
     ).toBeVisible();
     expect(screen.getByText('In review')).toBeVisible();
-    expect(screen.getByText('Current analyst')).toBeVisible();
-    expect(screen.getByText(/286.000 RUB/)).toBeVisible();
-    expect(screen.getByText('Score 78 · 3 signals')).toBeVisible();
-    expect(
-      screen.getByRole('link', { name: 'Back to Review Queue' }),
-    ).toHaveAttribute('href', '/review-queue');
+    expect(screen.getByText('You')).toBeVisible();
+    expect(screen.getAllByText(/286.000 ₽/).length).toBeGreaterThan(0);
+    expect(screen.getByText('Score 78 · Assessed 13:08')).toBeVisible();
+    expect(screen.getByRole('link', { name: 'Review Queue' })).toHaveAttribute(
+      'href',
+      '/review-queue',
+    );
     expect(screen.getAllByRole('main')).toHaveLength(1);
   });
 
@@ -70,7 +71,7 @@ describe('Review Case Workspace route and query states', () => {
     expect(document.querySelector('[aria-busy="true"]')).not.toBeNull();
     expect(
       await screen.findByRole('heading', {
-        name: `Case ${CANONICAL_REVIEW_CASE_ID}`,
+        name: CANONICAL_REVIEW_CASE_ID,
       }),
     ).toBeVisible();
   });
@@ -117,7 +118,7 @@ describe('Review Case Workspace route and query states', () => {
     await user.click(screen.getByRole('button', { name: 'Retry' }));
     expect(
       await screen.findByRole('heading', {
-        name: `Case ${CANONICAL_REVIEW_CASE_ID}`,
+        name: CANONICAL_REVIEW_CASE_ID,
       }),
     ).toBeVisible();
     expect(requests).toBe(3);
@@ -162,14 +163,14 @@ describe('Review Case Workspace route and query states', () => {
     renderRoute(undefined, true);
     expect(
       await screen.findByRole('heading', {
-        name: `Case ${CANONICAL_REVIEW_CASE_ID}`,
+        name: CANONICAL_REVIEW_CASE_ID,
       }),
     ).toBeVisible();
     await user.click(screen.getByRole('button', { name: 'Open second case' }));
     expect(
-      await screen.findByRole('heading', { name: 'Case RC-260907-0315' }),
+      await screen.findByRole('heading', { name: 'RC-260907-0315' }),
     ).toBeVisible();
-    expect(screen.getByText(/125.000 RUB/)).toBeVisible();
+    expect(screen.getAllByText(/125.000 ₽/).length).toBeGreaterThan(0);
     await waitFor(() =>
       expect(requestedIds).toEqual([
         CANONICAL_REVIEW_CASE_ID,

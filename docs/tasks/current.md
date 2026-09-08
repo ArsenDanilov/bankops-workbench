@@ -1,30 +1,30 @@
 # Current implementation milestone
 
 Current milestone:
-W1 — Review Case Workspace Route + Data Foundation
+W2 — Workspace Structural Layout + First-Fold Evidence
 
 Status: NEEDS_REVIEW
 
-Report: docs/reports/W1-workspace-data-foundation.md
+Report: docs/reports/W2-workspace-first-fold.md
 
 ## Approved assignment
 
-The human supplied and approved the complete W1 implementation prompt. Review
-Queue M1–M10 are accepted. Implement only the Workspace route and detailed-read
-data foundation described by that dedicated prompt.
+The human supplied and approved the complete W2 implementation prompt. Review
+Queue M1–M10 and W1 are accepted. Implement only the Workspace structural layout
+and canonical first-fold evidence described by that dedicated prompt.
 
-Add `/review-cases/:caseId`, a separate grouped `ReviewCaseDetails` projection,
-typed native-fetch details API, TanStack Query ownership and deterministic MSW
-canonical/404 behavior. Render only the minimal semantic loading, error,
-not-found and success states needed to prove the architecture. Preserve Review
-Queue behavior and do not implement the final Workspace layout or mutations.
+Synchronize the accepted Workspace visual specification, replace W1's minimal
+success surface with the exact 1008/24/360 desktop composition, and render the
+canonical Operation, Risk, Behavior, Recipient, Device, Transaction History
+boundary and structural Decision Rail from the W1 query. Preserve W1 async states
+and Review Queue behavior. Do not implement decision controls, History rows,
+Risk navigation or later scenarios.
 
-No dependencies are approved or needed. Complete lint, typecheck, test, build and
-focused localhost browser review. Write the declared report and finish
-NEEDS_REVIEW, never ACCEPTED.
+No dependencies were added. Implementation, focused localhost browser review,
+and the full quality gate are complete. The milestone is awaiting human review;
+only a human may mark it ACCEPTED.
 
 ## Next milestone boundary
 
-If W1 is human-accepted, recommend
-**W2 — Workspace Structural Layout + First-Fold Evidence**. Do not implement it
-in this task.
+If W2 is human-accepted, recommend
+**W3 — Evidence Grammar + Risk Navigation**. Do not implement it in this task.
