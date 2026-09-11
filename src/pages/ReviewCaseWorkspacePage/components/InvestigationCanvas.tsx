@@ -14,6 +14,7 @@ import {
 import type { EvidenceDestinationId } from '../lib/evidenceNavigation';
 import { AmountBaselineComparison } from './AmountBaselineComparison';
 import { RiskAssessmentSection } from './RiskAssessmentSection';
+import { TransactionHistorySection } from './TransactionHistorySection';
 import styles from '../ReviewCaseWorkspacePage.module.css';
 
 const SectionUnavailable = ({ label }: { label: string }) => (
@@ -75,12 +76,28 @@ const OperationSection = ({
 const BehaviorSection = ({
   behavior,
   activeDestinationId,
+  onHistory,
 }: {
   behavior: CustomerBehaviorContext | null;
-  activeDestinationId: EvidenceDestinationId | null;
+  activeDestinationId: EvidenceDestinationId | 'transaction-history' | null;
+  onHistory: () => void;
 }) => (
   <section className={styles.evidenceSection}>
-    <h2 className={styles.sectionTitle}>Customer Behavior</h2>
+    <div className={styles.sectionHeadingRow}>
+      <h2 className={styles.sectionTitle}>Customer Behavior</h2>
+      {behavior ? (
+        <a
+          className={styles.historyLink}
+          href="#transaction-history"
+          onClick={(event) => {
+            event.preventDefault();
+            onHistory();
+          }}
+        >
+          Review 90-day transaction history
+        </a>
+      ) : null}
+    </div>
     {behavior ? (
       <>
         <AmountBaselineComparison
@@ -201,31 +218,14 @@ const DeviceContextSection = ({
   </section>
 );
 
-const TransactionHistoryBoundary = ({
-  details,
-}: {
-  details: ReviewCaseDetails;
-}) => {
-  const history = details.contexts.transactionHistory;
-  return (
-    <section className={styles.historyBoundary}>
-      <h2 className={styles.sectionTitle}>Transaction History</h2>
-      <p>
-        {history.availability === 'available'
-          ? 'Required context · Evidence available for continued investigation'
-          : 'Required context unavailable'}
-      </p>
-    </section>
-  );
-};
-
 export const InvestigationCanvas = ({
   details,
 }: {
   details: ReviewCaseDetails;
 }) => {
-  const [activeDestinationId, setActiveDestinationId] =
-    useState<EvidenceDestinationId | null>(null);
+  const [activeDestinationId, setActiveDestinationId] = useState<
+    EvidenceDestinationId | 'transaction-history' | null
+  >(null);
   const acknowledgmentTimer = useRef<number | undefined>(undefined);
   const operation = details.contexts.operation;
   const risk = details.contexts.riskAssessment;
@@ -253,7 +253,9 @@ export const InvestigationCanvas = ({
     [],
   );
 
-  const navigateToEvidence = (destinationId: EvidenceDestinationId) => {
+  const navigateToEvidence = (
+    destinationId: EvidenceDestinationId | 'transaction-history',
+  ) => {
     const destination = document.getElementById(destinationId);
     if (!destination) return;
 
@@ -303,6 +305,7 @@ export const InvestigationCanvas = ({
             behavior.availability === 'available' ? behavior.data : null
           }
           activeDestinationId={activeDestinationId}
+          onHistory={() => navigateToEvidence('transaction-history')}
         />
         <div className={styles.verticalDivider} aria-hidden="true" />
         <RecipientRelationshipSection
@@ -322,7 +325,10 @@ export const InvestigationCanvas = ({
           />
         </>
       ) : null}
-      <TransactionHistoryBoundary details={details} />
+      <TransactionHistorySection
+        details={details}
+        isActive={activeDestinationId === 'transaction-history'}
+      />
     </div>
   );
 };

@@ -1,6 +1,8 @@
 .page {
   min-height: calc(100vh - 56px);
   padding: 16px 24px 24px;
+  /* Count the native page scrollbar within the 24px viewport-side gutter. */
+  padding-inline-end: max(8px, calc(24px - (100vw - 100%)));
 }
 
 .content {
@@ -630,18 +632,11 @@
   white-space: nowrap;
 }
 
-.historyBoundary {
-  height: 120px;
-  padding: 16px 24px;
-  border-top: var(--border-width-default) solid var(--color-border-subtle);
-  background: var(--color-bg-surface-subtle);
-}
-
-.historyBoundary p {
-  margin: var(--space-2) 0 0;
-  color: var(--color-text-muted);
-  font-size: var(--font-size-xs);
+.historyLink {
+  color: var(--color-accent);
+  font-size: 0.6875rem;
   line-height: 16px;
+  white-space: nowrap;
 }
 
 .unavailable {

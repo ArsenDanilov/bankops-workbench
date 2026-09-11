@@ -1,0 +1,246 @@
+.section {
+  padding: 16px 24px;
+  border-top: 1px solid var(--color-border-subtle);
+  min-width: 0;
+}
+.heading {
+  height: 48px;
+  margin-bottom: 16px;
+}
+.heading p {
+  margin: 8px 0 0;
+  font-size: var(--font-size-xs);
+  line-height: 16px;
+  color: var(--color-text-muted);
+}
+.amountHistory {
+  height: 248px;
+  margin-bottom: 16px;
+}
+.amountHistory h3,
+.localState h3 {
+  margin: 0;
+  font-size: var(--font-size-sm);
+  line-height: 20px;
+  font-weight: var(--font-weight-semibold);
+}
+.amountHistory h3 {
+  text-transform: uppercase;
+}
+.summary {
+  height: 36px;
+  margin: 0;
+  font-size: var(--font-size-xs);
+  line-height: 18px;
+  color: var(--color-text-secondary);
+}
+.chart {
+  height: 176px;
+  border-radius: var(--radius-sm);
+}
+.chart svg {
+  display: block;
+  width: 100%;
+  height: 176px;
+  overflow: visible;
+}
+.chart text {
+  fill: var(--color-text-muted);
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+}
+.gridLine {
+  stroke: var(--color-border-subtle);
+  stroke-width: 1;
+}
+.typicalBand {
+  fill: var(--color-border-default);
+  opacity: 0.3;
+}
+.median {
+  stroke: var(--color-text-muted);
+  stroke-dasharray: 5 4;
+}
+.historicalPoint {
+  fill: var(--color-text-secondary);
+  pointer-events: none;
+}
+.hitArea {
+  fill: transparent;
+  cursor: pointer;
+}
+.activePoint {
+  fill: none;
+  stroke: var(--color-accent);
+  stroke-width: 2;
+  pointer-events: none;
+}
+.currentPoint {
+  fill: var(--color-evidence-fraud);
+}
+.currentPoint text {
+  fill: var(--color-evidence-fraud);
+  font-weight: var(--font-weight-semibold);
+  paint-order: stroke;
+  stroke: var(--material-surface-opaque);
+  stroke-width: 3px;
+  stroke-linejoin: round;
+}
+.pointDetail {
+  height: 16px;
+  margin: 0;
+  font-size: var(--font-size-xs);
+  line-height: 16px;
+  color: var(--color-text-secondary);
+  white-space: nowrap;
+}
+.currentReference {
+  height: 56px;
+  margin-bottom: 8px;
+  border-left: 2px solid var(--color-evidence-fraud);
+  background: color-mix(
+    in srgb,
+    var(--color-evidence-fraud) 6%,
+    var(--material-surface-opaque)
+  );
+}
+.currentLabel {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  height: 24px;
+  padding: 0 12px;
+  font-size: var(--font-size-xs);
+  line-height: 16px;
+}
+.currentLabel strong {
+  text-transform: uppercase;
+  font-weight: var(--font-weight-semibold);
+}
+.currentLabel span {
+  color: var(--color-text-muted);
+}
+.currentRow {
+  display: grid;
+  grid-template-columns: 146px 128px minmax(0, 340px) 220px 124px;
+  align-items: center;
+  height: 32px;
+  font-size: var(--font-size-sm);
+  line-height: 18px;
+}
+.currentRow > * {
+  min-width: 0;
+  padding: 0 12px;
+  white-space: nowrap;
+}
+.currentRow > :nth-child(2) {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+.table {
+  width: 100%;
+  table-layout: fixed;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-size: var(--font-size-sm);
+  line-height: 18px;
+}
+.table caption {
+  text-align: left;
+  height: 24px;
+  font-size: var(--font-size-xs);
+  line-height: 24px;
+  text-transform: uppercase;
+}
+.table th {
+  height: 40px;
+  font-size: var(--font-size-xs);
+  color: var(--color-text-secondary);
+  background: var(--color-bg-surface-subtle);
+  font-weight: var(--font-weight-medium);
+}
+.table td {
+  height: 48px;
+  border-bottom: 1px solid var(--color-border-subtle);
+}
+.table th,
+.table td {
+  padding: 0 12px;
+  text-align: left;
+}
+.table th:nth-child(2),
+.table td:nth-child(2) {
+  text-align: right;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+.table td:nth-child(2) {
+  font-weight: var(--font-weight-semibold);
+}
+.table td:nth-child(4),
+.table td:nth-child(5) {
+  color: var(--color-text-secondary);
+}
+.table time {
+  display: block;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+.table time span {
+  display: block;
+  color: var(--color-text-muted);
+  font-size: var(--font-size-xs);
+  line-height: 16px;
+}
+.footer {
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: var(--font-size-xs);
+  color: var(--color-text-secondary);
+}
+.footer button {
+  min-height: 28px;
+  font-size: var(--font-size-xs);
+}
+.localState {
+  padding: 24px;
+  background: var(--color-bg-surface-subtle);
+  margin-bottom: 16px;
+  color: var(--color-text-secondary);
+}
+.localState p {
+  font-size: var(--font-size-sm);
+}
+.chartSkeleton {
+  height: 248px;
+  margin-bottom: 16px;
+  padding: 8px 0;
+}
+.skeletonLine {
+  display: block;
+  height: 12px;
+  max-width: 70%;
+  border-radius: 3px;
+  background: var(--color-border-subtle);
+}
+.skeletonPlot {
+  display: block;
+  height: 176px;
+  margin-top: 24px;
+  background: var(--color-bg-surface-subtle);
+  border: 1px solid var(--color-border-subtle);
+}
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
