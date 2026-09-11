@@ -12,6 +12,7 @@ import {
   readMockReviewQueue,
 } from './reviewQueueState';
 import { readMockReviewCaseDetails } from './reviewCaseDetailsState';
+import { readTransactionHistoryPage } from './data/transactionHistory.fixtures';
 
 const positiveInteger = (value: string | null) =>
   value !== null && /^[1-9]\d*$/.test(value) ? Number(value) : null;
@@ -62,6 +63,32 @@ export const reviewQueueHandlers = [
 ];
 
 export const reviewCaseDetailsHandlers = [
+  http.get(
+    '/api/review-cases/:caseId/transaction-history',
+    async ({ params, request }) => {
+      const mock = readMockReviewCaseDetails();
+      if (params.caseId !== mock.canonical.case.id)
+        return HttpResponse.json(
+          { message: 'Review case not found' },
+          { status: 404 },
+        );
+      const url = new URL(request.url);
+      const limit = positiveInteger(url.searchParams.get('limit'));
+      const cursor = url.searchParams.get('cursor') ?? undefined;
+      if (
+        !limit ||
+        limit > 100 ||
+        (cursor !== undefined &&
+          (!/^\d+$/.test(cursor) || Number(cursor) >= 46))
+      )
+        return HttpResponse.json(
+          { message: 'Invalid history page' },
+          { status: 400 },
+        );
+      await delay(mock.latencyMs);
+      return HttpResponse.json(readTransactionHistoryPage(limit, cursor));
+    },
+  ),
   http.get('/api/review-cases/:caseId', async ({ params }) => {
     const caseId = String(params.caseId ?? '');
     const mock = readMockReviewCaseDetails();

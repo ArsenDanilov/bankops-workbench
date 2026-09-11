@@ -91,6 +91,42 @@ disclosure state: the first three signals remain in the fixed row and only the
 fourth/fifth appear in the overlay. No History request or Decision mutation is
 introduced.
 
+## Workspace Transaction History — W4
+
+History extends the W1 read boundary with
+`GET /api/review-cases/:caseId/transaction-history?limit=10&cursor=…`.
+`ReviewCaseDetails` still contains a descriptor only; no embedded History rows.
+The separate typed response has caseId, sourceSnapshotId, asOf, fixed 90-day
+period, authored summary references, the complete bounded amountSeries, the
+current items page, and pageInfo (limit, decimal-offset cursor/nextCursor, total).
+The compact event projection includes the recipient/relationship/status needed
+for chart point details; no second operation-detail endpoint is introduced.
+
+`useInfiniteQuery` is justified specifically by explicit Load older semantics:
+TanStack owns the ordered pages and in-flight next-page state, retaining existing
+rows on pending/error. Its key is
+`['review-cases', 'transaction-history', caseId, sourceSnapshotId, 10]`;
+cursor state lives in TanStack pageParams. There is no appended-pages React store,
+infinite scroll or generic pagination framework. One bounded retry and local
+Retry are real requests. AbortSignal reaches native fetch. Runtime validation
+checks projection fields, chronology, page alignment and identity; the query
+rejects a different sourceSnapshotId before presenting unrelated evidence.
+Server-authoritative unavailable descriptors disable this query entirely.
+
+MSW reuses the existing Workspace mock latency/lifecycle and serves the exact
+46 approved timestamp/amount pairs. The held operation comes only from details
+and is excluded from History. Optional median/range permit valid limited-history
+responses without client reliability rules. Production code does not derive
+median, typical range, deviation, frequency or risk from historical events.
+
+Workspace-local SVG uses presentation-only ceiling/time-position helpers and one
+listbox/aria-activedescendant entry for chronological keyboard exploration.
+The current diamond is distinct from historical circles. Chart interaction is
+local, not shared with the table. The existing Queue overflow-text component is
+reused unchanged for recipient disclosure. The semantic table and current-held
+reference remain separate DOM structures. No new dependency, mutation, chart
+framework or global state system is introduced.
+
 ## Testing and quality roadmap
 
 - Existing checks: ESLint (`npm run lint`), TypeScript (`npm run typecheck`),

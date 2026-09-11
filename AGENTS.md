@@ -14,17 +14,56 @@ no global client state store.
    `AGENTS.override.md` before editing.
 2. Read [the current task](docs/tasks/current.md). Implement only its approved
    scope; the [backlog](docs/tasks/backlog.md) is not authorization to start work.
-3. Read [Product/UX](docs/product/product-spec.md),
-   [architecture](docs/architecture/architecture-decisions.md), and the relevant
-   [visual system](docs/visual/visual-system.md) and
-   [Review Queue specification](docs/visual/review-queue.md).
-4. Inspect the relevant code and Git status. Preserve useful documentation and
+3. Inspect Git status, the current branch and relevant repository structure.
+4. Search first, then read only Product, Visual and Architecture sections
+   referenced by the current task. Historical reports are audit records, not
+   normal implementation source of truth; read one only for an otherwise-missing
+   implementation detail, regression, known issue or explicitly referenced fact.
+5. Inspect directly affected code and tests. Preserve useful documentation and
    unrelated user changes. If approved sources conflict or lack a decision
    necessary for implementation, report it instead of inventing a requirement.
-5. Implement the smallest scoped change, verify it, and write a report using
+6. For a non-trivial code change, use `complexity-router` to select proportionate
+   Ponytail and Code Review Graph work. Do not run either for a clearly local edit.
+7. Form a compact working capsule: goal, scope, invariants, Human Gates, likely
+   files, affected tests, browser scenarios and explicit exclusions. Keep it in
+   working context rather than another document.
+8. Implement the smallest scoped change, verify it, and write a report using
    [the report contract](docs/reports/README.md).
-6. Set the current task to `NEEDS_REVIEW` when implementation is ready for human
+9. Set the current task to `NEEDS_REVIEW` when implementation is ready for human
    review. Only a human may accept it; never set `ACCEPTED` autonomously.
+
+## Efficient execution protocol
+
+- Source priority: this contract → current task → Product → Visual → Architecture
+  → implementation/tests → historical reports.
+- Explore with `rg`/symbol search, then narrow ranges. Do not print large files,
+  diffs, DOM/accessibility trees or successful logs without a diagnostic reason.
+  Do not reread unchanged source of truth in the same milestone.
+- Before application edits, validate supplied data/contracts: count, uniqueness,
+  order, time window, IDs, aggregates, inclusion rules, snapshot identity and
+  API/UI compatibility. Stop early at a Human Gate for conflict or missing input.
+- Implement vertical slices: types/fixture/API → query → rendering/states →
+  interaction/accessibility → integration. Run the smallest affected check and
+  nearest regression boundary after each slice.
+- During iteration prefer targeted tests and targeted ESLint. Run project
+  typecheck after a meaningful typed boundary. Broaden immediately for package,
+  config, router/provider/bootstrap, global style/test/MSW lifecycle, shared
+  public contract, security or widely reused component changes.
+- For visible work use one dev server/browser session and compact probes for
+  geometry, overflow, sticky behavior, focus, interaction and console. Take
+  screenshots only when they materially aid visual judgment.
+- After implementation, browser review and repairs, run affected checks, enter
+  code freeze, then run the complete final gate once: lint, typecheck, test,
+  build and `git diff --check`. Later application/config changes invalidate it;
+  documentation-only edits do not.
+- Group tests by coherent responsibility. Do not create a file per tiny scenario,
+  merge unrelated tests, disable isolation or alter runner strategy without
+  measured evidence and approval. A shared helper requires demonstrated reuse.
+- Minimize output: summarize PASS results; for failures show the failing
+  assertion/stack/source first and expand only as needed.
+- Commentary marks phases, blockers, direction changes and long-check completion.
+  Final responses contain status, verification, material limitation, report link
+  and requested commit title.
 
 ## Architecture guardrails
 
@@ -48,8 +87,9 @@ unapproved dependency. Do not change package scripts outside approved scope.
 
 ## Quality and reports
 
-Every implementation milestone must run the verification commands relevant to
-the repository. At minimum, where available:
+Use targeted affected-scope verification during implementation. Every completed
+implementation milestone must run this complete final gate once after code
+freeze, where available:
 
 - `npm run lint`
 - `npm run typecheck`
@@ -57,7 +97,8 @@ the repository. At minimum, where available:
 - `npm run build`
 
 If a script is absent, report that fact; do not invent an unrelated replacement.
-Inspect the final Git diff, including new files, for scope and unintended changes.
+Before human acceptance, inspect the final Git diff, including new files, for
+scope and unintended changes.
 Reports must state actual command results, limitations and deviations, not
 marketing summaries. A passing check is not human acceptance.
 
@@ -105,3 +146,8 @@ Only implement the current milestone. Do not opportunistically implement future
 backlog work or refactor unrelated code unless needed to complete the milestone
 safely. Update durable documentation when approved decisions or implementation
 facts change; never rewrite approval history as if new decisions were preapproved.
+
+Keep `docs/tasks/current.md` compact and update it only for a material scope,
+status or blocker change. Do not duplicate one decision across Product, Visual,
+Architecture, tasks and reports; each layer records only its responsibility.
+Never rewrite an accepted historical milestone report.

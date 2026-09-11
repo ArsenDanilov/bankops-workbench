@@ -1,28 +1,36 @@
-# Current implementation milestone
+# Current milestone
 
-Current milestone:
-W3 — Review Case Workspace Evidence Grammar + Risk Navigation
+Milestone: W4 — Review Case Workspace Transaction History Boundary
 
 Status: NEEDS_REVIEW
 
-Report: docs/reports/W3-workspace-evidence-navigation.md
+## Goal
 
-## Approved assignment
+Implement the accepted 90-day Transaction History boundary, visualization,
+current comparison, semantic table, pagination and local states without changing
+the accepted first fold or beginning Claim/Decision workflow.
 
-The human supplied and approved the complete W3 implementation prompt and
-confirmed W1/W2 acceptance. Implement only the amount baseline comparison,
-frontend-only Risk → Evidence navigation, focus/acknowledgment behavior and
-fixed-height 4–5 signal disclosure described by that prompt.
+## Source of truth
 
-Preserve the accepted 1008/24/360 desktop composition, immutable risk snapshots,
-W1 async states, structural-only Decision Rail, Transaction History boundary and
-Review Queue behavior. Add no dependency and do not implement History data,
-Decision workflow, missing-context variants or later scenarios.
+- Product: `docs/product/product-spec.md`
+- Visual: `docs/visual/review-case-workspace-transaction-history.md`
+- Architecture: `docs/architecture/architecture-decisions.md`
 
-Implementation, detailed localhost review and the full quality gate are
-complete. W3 is awaiting human review; only a human may mark it ACCEPTED.
+## Fixed invariants / Human Gate
+
+The human supplied the exact approved 46 events. Current 286,000 RUB is excluded;
+Behavior/History share the snapshot. Human review must reconcile Behavior
+`7 / 7d` with four events in the exact approved seven-day History window.
+
+## Verification
+
+Code freeze complete. Final gate PASS: lint, typecheck, 16 files / 92 tests,
+build and diff check. Browser/accessibility review complete at 1440×900.
+
+## Report
+
+`docs/reports/W4-workspace-transaction-history.md`
 
 ## Next milestone boundary
 
-If W3 is human-accepted, recommend **W4 — Transaction History Boundary**.
-Do not implement it in this task.
+After W4 human review, recommend **W5 — Claim Workflow**. Do not begin it now.

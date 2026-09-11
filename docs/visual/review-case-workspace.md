@@ -151,11 +151,23 @@ opens a non-modal disclosure for the remainder. The native button exposes
 outside pointer interaction closes, and disclosure content remains keyboard
 reachable without a focus trap.
 
-## Deferred after W3
+## W4 Transaction History
 
-- W4: Transaction History request and rows.
+The approved [Transaction History specification](review-case-workspace-transaction-history.md)
+records the coordinated History anatomy, interaction/state requirements and all
+46 authoritative historical events. It supersedes the W2 structural-only History
+boundary for W4 without changing the accepted first fold.
+
+The W4 implementation keeps the native page scrollbar and counts its width
+inside the right 24px viewport gutter, preserving 1008/24/360 geometry on
+Windows. The History caption supplies a compact 24px label above its 40px header;
+chart/current/row sizes remain 248/56/48px. Behavior's continuation link shares
+the existing heading row, without growing its 216px section.
+
+## Deferred after W4
+
 - Later milestones: missing-context treatment, queued/other-analyst/terminal
   states, Claim, Release/Block form, mutation/concurrency handling, Case History.
 - Responsive/mobile Workspace behavior and Inter reconciliation.
 
-None of these deferred capabilities is implemented by W3.
+None of these deferred capabilities is implemented by W4.
