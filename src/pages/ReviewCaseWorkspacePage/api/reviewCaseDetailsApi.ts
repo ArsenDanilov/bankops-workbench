@@ -27,6 +27,34 @@ export class ReviewCaseDetailsRequestError extends Error {
   }
 }
 
+export type ReviewCaseClaimErrorCode =
+  | 'claim_conflict'
+  | 'case_invalidated';
+
+export class ReviewCaseClaimError extends Error {
+  readonly status: number;
+  readonly code?: ReviewCaseClaimErrorCode;
+  readonly current?: ReviewCaseDetails;
+
+  constructor(
+    status: number,
+    code?: ReviewCaseClaimErrorCode,
+    current?: ReviewCaseDetails,
+  ) {
+    super(
+      code === 'claim_conflict'
+        ? 'Another analyst already took this case into review'
+        : code === 'case_invalidated'
+          ? 'This case was invalidated before it could be claimed'
+          : `Review case claim failed (${status})`,
+    );
+    this.name = 'ReviewCaseClaimError';
+    this.status = status;
+    this.code = code;
+    this.current = current;
+  }
+}
+
 const isObject = (value: unknown): value is Record<string, unknown> =>
   typeof value === 'object' && value !== null;
 const isString = (value: unknown): value is string => typeof value === 'string';
@@ -313,6 +341,42 @@ export const fetchReviewCaseDetails = async (
   const response = await fetch(endpoint(caseId), { signal });
   if (!response.ok) throw new ReviewCaseDetailsRequestError(response.status);
   return parseReviewCaseDetails((await response.json()) as unknown);
+};
+
+export const claimReviewCase = async (
+  caseId: string,
+  expectedVersion: number,
+) => {
+  const response = await fetch(
+    new URL(
+      `/api/review-cases/${encodeURIComponent(caseId)}/claim`,
+      window.location.origin,
+    ),
+    {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ expectedVersion }),
+    },
+  );
+
+  const body = (await response.json()) as unknown;
+  if (response.ok) return parseReviewCaseDetails(body);
+
+  if (
+    response.status === 409 &&
+    isObject(body) &&
+    (body.code === 'claim_conflict' || body.code === 'case_invalidated')
+  ) {
+    let current: ReviewCaseDetails | undefined;
+    try {
+      current = parseReviewCaseDetails(body.current);
+    } catch {
+      current = undefined;
+    }
+    throw new ReviewCaseClaimError(response.status, body.code, current);
+  }
+
+  throw new ReviewCaseClaimError(response.status);
 };
 
 export const isReviewCaseNotFoundError = (error: unknown) =>

@@ -164,10 +164,24 @@ Windows. The History caption supplies a compact 24px label above its 40px header
 chart/current/row sizes remain 248/56/48px. Behavior's continuation link shares
 the existing heading row, without growing its 216px section.
 
-## Deferred after W4
+## W5 Claim workflow
 
-- Later milestones: missing-context treatment, queued/other-analyst/terminal
-  states, Claim, Release/Block form, mutation/concurrency handling, Case History.
+The Decision Rail keeps its accepted 360px geometry and evidence summary. A
+queued, unassigned case is explicitly labelled `Available for review` and offers
+one primary native button, `Take into review`; opening the route alone changes no
+ownership. Pending copy replaces the button label, prevents duplicate activation
+and leaves the queued/available orientation and investigation evidence visible.
+
+Authoritative success updates the orientation and rail to `In review` / `You`,
+removes Claim and moves focus to the updated workflow context. Another-analyst
+and invalidated conflict results replace stale state, keep evidence readable,
+remove Claim and expose explicit read-only/conflict copy without relying on
+color. Release and Block controls remain absent.
+
+## Deferred after W5
+
+- Later milestones: missing-context treatment, Release/Block form, Decision
+  mutation, remaining concurrency handling and Case History.
 - Responsive/mobile Workspace behavior and Inter reconciliation.
 
-None of these deferred capabilities is implemented by W4.
+None of these deferred capabilities is implemented by W5.

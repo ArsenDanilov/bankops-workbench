@@ -18,6 +18,13 @@ full Workspace experience and Case History remain future work.
 ## Decisions and ownership
 
 - The analyst workflow includes claim, release and block.
+- Opening a queued case is read-only and never claims it. Claim is an explicit
+  analyst action that moves an available case from `queued` to `in_review` only
+  after authoritative server success.
+- Claim uses the case version as a concurrency token. The current analyst comes
+  from server/session context; the browser does not choose an analyst identity.
+- A case claimed by another analyst remains readable but is not claimable by the
+  current analyst. An invalidated case cannot be claimed.
 - A block rationale is required; a release comment is optional.
 - Multiple owned `in_review` cases are allowed.
 - Lifecycle, ownership, operational urgency and fraud evidence remain distinct.
@@ -42,9 +49,9 @@ for the Workspace's decision-readiness contexts.
 
 ## Current implementation boundary
 
-The Queue and first-fold Workspace use typed async APIs backed by deterministic
-MSW fixtures in local development. The Workspace includes contextual navigation
-inside already-authorized evidence, but there is still no real server
-persistence, claim/release/block execution, Queue return context or Transaction
-History data. Product decisions above must not be treated as authorization to
-implement those features now.
+The Queue and Workspace use typed async APIs backed by deterministic MSW fixtures
+in local development. Transaction History and the explicit Claim transition are
+implemented. Claim has no real backend persistence or authentication; MSW models
+the server-owned current analyst and deterministic concurrency outcomes. Release,
+Block, final Decision execution, Queue return context and Case History remain
+future work and are not authorized by this baseline alone.

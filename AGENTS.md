@@ -22,8 +22,9 @@ no global client state store.
 5. Inspect directly affected code and tests. Preserve useful documentation and
    unrelated user changes. If approved sources conflict or lack a decision
    necessary for implementation, report it instead of inventing a requirement.
-6. For a non-trivial code change, use `complexity-router` to select proportionate
-   Ponytail and Code Review Graph work. Do not run either for a clearly local edit.
+6. Apply Ponytail proportionately. Use `complexity-router` or Code Review Graph
+   only when a shared abstraction has broad unknown impact, ordinary static search
+   is insufficient, or the task explicitly requires deeper dependency analysis.
 7. Form a compact working capsule: goal, scope, invariants, Human Gates, likely
    files, affected tests, browser scenarios and explicit exclusions. Keep it in
    working context rather than another document.
@@ -43,22 +44,28 @@ no global client state store.
   order, time window, IDs, aggregates, inclusion rules, snapshot identity and
   API/UI compatibility. Stop early at a Human Gate for conflict or missing input.
 - Implement vertical slices: types/fixture/API → query → rendering/states →
-  interaction/accessibility → integration. Run the smallest affected check and
-  nearest regression boundary after each slice.
-- During iteration prefer targeted tests and targeted ESLint. Run project
-  typecheck after a meaningful typed boundary. Broaden immediately for package,
-  config, router/provider/bootstrap, global style/test/MSW lifecycle, shared
-  public contract, security or widely reused component changes.
-- For visible work use one dev server/browser session and compact probes for
-  geometry, overflow, sticky behavior, focus, interaction and console. Take
-  screenshots only when they materially aid visual judgment.
-- After implementation, browser review and repairs, run affected checks, enter
-  code freeze, then run the complete final gate once: lint, typecheck, test,
-  build and `git diff --check`. Later application/config changes invalidate it;
-  documentation-only edits do not.
-- Group tests by coherent responsibility. Do not create a file per tiny scenario,
-  merge unrelated tests, disable isolation or alter runner strategy without
-  measured evidence and approval. A shared helper requires demonstrated reuse.
+  interaction/accessibility → integration. Verification is diff-driven, not a
+  checklist: identify a realistic failure, then use the cheapest reliable check.
+- During iteration avoid repeated broad checks. Use targeted ESLint where
+  practical and run project typecheck once after contract-relevant executable
+  TypeScript is substantially complete.
+- For visible work use one dev server/browser session and targeted probes for the
+  changed acceptance behavior and nearest plausible regression boundary. Never
+  dump a full DOM/accessibility tree or repeated dataset by default.
+- Inspect with `git diff --name-only` and `git diff --stat`; open only relevant or
+  suspicious hunks. Do not print a complete milestone diff by default.
+- Tool discovery must answer a concrete need. Never request a complete tool,
+  plugin or capability catalog; prefer `rg`, import and call-site search.
+- A passing check remains valid until a later change can invalidate it.
+  Documentation-only edits do not trigger repeated application verification.
+- Before any extra check ask: what failure it detects, whether the diff can cause
+  it, and whether a cheaper reliable check exists. Skip generic regression smoke.
+- For API/data changes validate only changed contract invariants with compact,
+  deterministic probes. Shared changes expand scope only after identifying their
+  actual consumers.
+- Target roughly 15k–25k visible context for a normal local feature. Above
+  25k–30k, first look for broad reads, catalogs, DOM dumps, repeated checks,
+  historical reports, large diffs or duplicated specifications.
 - Minimize output: summarize PASS results; for failures show the failing
   assertion/stack/source first and expand only as needed.
 - Commentary marks phases, blockers, direction changes and long-check completion.
@@ -87,30 +94,46 @@ unapproved dependency. Do not change package scripts outside approved scope.
 
 ## Quality and reports
 
-Use targeted affected-scope verification during implementation. Every completed
-implementation milestone must run this complete final gate once after code
-freeze, where available:
+Verification follows the current diff. The universal minimum for any repository
+change is final scope inspection, confirmation that unrelated files were not
+changed, and `git diff --check`. Additional checks require a concrete failure mode:
 
-- `npm run lint`
-- `npm run typecheck`
-- `npm run test`
-- `npm run build`
+- Documentation only: diff scope and diff check.
+- Local CSS: affected browser surface and diff check; targeted lint if applicable.
+- Local TS helper: targeted lint, project typecheck when contracts/imports matter,
+  and diff check.
+- Local UI: targeted lint, typecheck, changed browser interaction and diff check.
+- API/query/mutation: targeted lint, typecheck, relevant runtime/browser flow,
+  one production build when the production path changed, and diff check.
+- Router/provider/shared infrastructure: broaden only to actual consumers, then
+  run representative lint/typecheck/build/runtime checks.
+- Dependency/config/build changes: full relevant static/build verification and a
+  representative application smoke.
 
-If a script is absent, report that fact; do not invent an unrelated replacement.
-Before human acceptance, inspect the final Git diff, including new files, for
-scope and unintended changes.
+During FUNCTIONAL DEVELOPMENT, do not create, modify, run or debug automated
+tests. Record important future coverage in `docs/tasks/deferred-tests.md`; tests
+run only in the dedicated Final Testing & Hardening phase.
+
+Use full repository lint only for shared infrastructure/configuration, broad
+cross-feature changes, impractical targeted invocation, or an explicit milestone
+requirement. Run a production build only when compilation, bundling, module/route
+resolution, CSS imports, dependencies, assets or build-time behavior can change.
+If a required script is absent, report it rather than inventing a replacement.
+Before human acceptance, inspect the final diff, including new files, for scope
+and unintended changes.
 Reports must state actual command results, limitations and deviations, not
 marketing summaries. A passing check is not human acceptance.
 
 ## Browser review
 
-After any visible UI change:
+Browser review is required only when observable runtime or UI behavior changed.
+Test the changed behavior and its nearest plausible regression boundary, not
+accepted unrelated functionality. When browser review is required:
 
 1. Start the local development server and open the affected route.
-2. Use the visual specification's target viewport; Review Queue uses 1440 × 900.
-3. Check the browser console and required states, including keyboard interaction.
-4. Compare with the relevant visual specification and fix obvious implementation
-   deviations within scope.
+2. Use the applicable target viewport only when visual acceptance depends on it.
+3. Probe required changed states, relevant keyboard/focus behavior and console.
+4. Measure geometry only when the diff can affect that geometry.
 5. Report route, viewport, console findings, state checks and any unavailable
    review capability. Do not claim unperformed checks passed.
 
@@ -119,10 +142,11 @@ record that browser review is not required when application behavior is unchange
 
 ## Accessibility
 
-Accessibility is part of implementation, not an optional later pass. Preserve
-semantic HTML, native buttons/links, keyboard access, visible focus, text
-alternatives to color-only state, reduced-motion support and usable opaque
-fallbacks for translucent materials.
+Accessibility is part of implementation, not an optional later pass. Verify the
+new or modified interaction only: accessible name, native semantics, keyboard,
+pending/error behavior and focus as applicable. Preserve text alternatives to
+color-only state, reduced-motion support and usable opaque material fallbacks;
+do not recertify unrelated accepted accessibility behavior.
 
 ## Human gates
 
@@ -151,3 +175,5 @@ Keep `docs/tasks/current.md` compact and update it only for a material scope,
 status or blocker change. Do not duplicate one decision across Product, Visual,
 Architecture, tasks and reports; each layer records only its responsibility.
 Never rewrite an accepted historical milestone report.
+Milestone prompts should reference stable repository rules and sources instead of
+repeating them.
