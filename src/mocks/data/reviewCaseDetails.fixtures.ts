@@ -5,18 +5,14 @@ export const CANONICAL_REVIEW_CASE_ID = 'RC-260907-0314';
 export const canonicalReviewCaseDetails = {
   case: {
     id: CANONICAL_REVIEW_CASE_ID,
-    lifecycle: 'in_review',
+    lifecycle: 'queued',
     version: 3,
     operationId: 'OP-260907-0718',
-    assignedAnalystId: 'analyst-current',
-    startedAt: '2026-09-07T13:08:04+03:00',
     createdAt: '2026-09-07T13:06:21+03:00',
-    updatedAt: '2026-09-07T13:08:04+03:00',
+    updatedAt: '2026-09-07T13:08:00+03:00',
   },
   ownership: {
-    status: 'current_analyst',
-    analystId: 'analyst-current',
-    analystDisplayName: 'Current analyst',
+    status: 'unassigned',
   },
   sla: {
     state: 'due_soon',
@@ -129,5 +125,8 @@ export const canonicalReviewCaseDetails = {
       },
     },
   },
-  decisionReadiness: { status: 'ready' },
+  decisionReadiness: {
+    status: 'blocked',
+    reasons: ['case_not_in_review', 'not_assigned_to_current_analyst'],
+  },
 } satisfies ReviewCaseDetails;

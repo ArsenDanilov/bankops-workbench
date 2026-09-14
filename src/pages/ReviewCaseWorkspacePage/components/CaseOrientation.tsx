@@ -41,7 +41,7 @@ export const CaseOrientation = ({ details }: CaseOrientationProps) => {
             {details.ownership.status === 'current_analyst'
               ? 'You'
               : details.ownership.status === 'unassigned'
-                ? 'Unassigned'
+                ? 'Available'
                 : details.ownership.analystDisplayName}
           </span>
         </div>

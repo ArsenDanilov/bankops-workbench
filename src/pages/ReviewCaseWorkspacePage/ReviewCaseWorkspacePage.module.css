@@ -752,7 +752,102 @@
   width: 7px;
   height: 7px;
   border-radius: 50%;
+}
+
+.readinessReady span {
   background: var(--color-status-success);
+}
+
+.readinessBlocked span {
+  background: var(--color-text-muted);
+}
+
+.claimWorkflow {
+  margin-block-start: var(--space-4);
+  padding-block-start: var(--space-4);
+  border-top: var(--border-width-default) solid var(--color-border-subtle);
+}
+
+.claimWorkflow:focus {
+  border-radius: var(--radius-sm);
+  outline: var(--focus-ring-width) solid var(--color-focus-ring);
+  outline-offset: var(--focus-ring-offset);
+}
+
+.claimWorkflow h3,
+.claimWorkflow p {
+  margin: 0;
+}
+
+.claimWorkflow h3 {
+  color: var(--color-text-primary);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  line-height: 18px;
+}
+
+.claimWorkflow p {
+  margin-block-start: var(--space-1);
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-xs);
+  line-height: 16px;
+}
+
+.claimButton {
+  width: 100%;
+  min-height: 40px;
+  margin-block-start: var(--space-4);
+  padding-inline: var(--space-4);
+  border: var(--border-width-default) solid var(--color-accent);
+  border-radius: var(--radius-sm);
+  background: var(--color-accent);
+  color: var(--color-text-inverse);
+  cursor: pointer;
+  font: inherit;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+}
+
+.claimButton:hover:not(:disabled) {
+  background: var(--color-accent-hover);
+}
+
+.claimButton:disabled {
+  cursor: wait;
+  opacity: 0.72;
+}
+
+.claimAnnouncement,
+.claimAlert {
+  margin: var(--space-3) 0 0;
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-sm);
+  font-size: var(--font-size-xs);
+  line-height: 16px;
+}
+
+.claimAnnouncement {
+  border-inline-start: 2px solid var(--color-status-success);
+  background: var(--color-bg-surface-subtle);
+  color: var(--color-status-success);
+}
+
+.claimAlert {
+  border-inline-start: 2px solid var(--color-status-danger);
+  background: var(--color-bg-surface-subtle);
+  color: var(--color-status-danger);
+}
+
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 }
 
 .statePanel {

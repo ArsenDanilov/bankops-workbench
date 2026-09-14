@@ -57,9 +57,8 @@ manual Retry are implemented, and AbortSignal reaches native fetch. MSW
 starts once at the application boundary in local development and once through
 central Vitest lifecycle hooks in tests; feature components do not know the
 transport is mocked. Production builds contain the API clients but do not start
-a mock worker. The details response includes only a Transaction History
-descriptor, not rows. There is no Claim/Decision API, Axios, backend, persistence,
-authentication, global client store, polling, SSE or WebSocket.
+  a mock worker. There is no Axios, backend persistence, authentication, global
+  client store, polling, SSE or WebSocket.
 
 ## Workspace presentation boundary — W2
 
@@ -126,6 +125,23 @@ local, not shared with the table. The existing Queue overflow-text component is
 reused unchanged for recipient disclosure. The semantic table and current-held
 reference remain separate DOM structures. No new dependency, mutation, chart
 framework or global state system is introduced.
+
+## Workspace Claim mutation — W5
+
+W5 adds the pessimistic `POST /api/review-cases/:caseId/claim` mutation. The
+browser sends only `expectedVersion`; current-analyst identity remains in the
+server/session boundary modelled by MSW. Success returns the authoritative
+Workspace projection with `in_review`, ownership, server timestamps and an
+incremented version. Same-analyst retry returns that current projection.
+
+The mutation writes the exact `['review-cases', 'detail', caseId]` cache and
+invalidates the `['reviewQueue']` query family instead of patching filtered Queue
+pages. A `409 claim_conflict` or `409 case_invalidated` may carry the authoritative
+current projection; the client replaces stale details, invalidates Queue queries
+and renders read-only/conflict state without an optimistic rollback. Deterministic
+MSW-only scenarios are selected from the development page referrer; production
+request shape and routing remain unchanged. No global store or new dependency is
+introduced.
 
 ## Testing and quality roadmap
 

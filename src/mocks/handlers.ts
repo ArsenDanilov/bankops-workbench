@@ -11,11 +11,26 @@ import {
   incorporateMockIncomingCase,
   readMockReviewQueue,
 } from './reviewQueueState';
-import { readMockReviewCaseDetails } from './reviewCaseDetailsState';
+import {
+  claimMockReviewCase,
+  readMockReviewCaseDetails,
+  type MockClaimScenario,
+} from './reviewCaseDetailsState';
 import { readTransactionHistoryPage } from './data/transactionHistory.fixtures';
 
 const positiveInteger = (value: string | null) =>
   value !== null && /^[1-9]\d*$/.test(value) ? Number(value) : null;
+
+const claimScenarioFromRequest = (request: Request): MockClaimScenario => {
+  try {
+    const scenario = new URL(request.referrer).searchParams.get('claimScenario');
+    if (scenario === 'claim_conflict' || scenario === 'case_invalidated')
+      return scenario;
+  } catch {
+    // Requests without a document referrer use the normal success path.
+  }
+  return 'success';
+};
 
 export const reviewQueueHandlers = [
   http.get('/api/review-cases', async ({ request }) => {
@@ -89,9 +104,52 @@ export const reviewCaseDetailsHandlers = [
       return HttpResponse.json(readTransactionHistoryPage(limit, cursor));
     },
   ),
-  http.get('/api/review-cases/:caseId', async ({ params }) => {
+  http.post(
+    '/api/review-cases/:caseId/claim',
+    async ({ params, request }) => {
+      const scenario = claimScenarioFromRequest(request);
+      const mock = readMockReviewCaseDetails(scenario);
+      if (params.caseId !== mock.canonical.case.id)
+        return HttpResponse.json(
+          { message: 'Review case not found' },
+          { status: 404 },
+        );
+
+      let body: unknown;
+      try {
+        body = await request.json();
+      } catch {
+        return HttpResponse.json(
+          { message: 'Invalid claim request' },
+          { status: 400 },
+        );
+      }
+      if (
+        typeof body !== 'object' ||
+        body === null ||
+        !('expectedVersion' in body) ||
+        typeof body.expectedVersion !== 'number' ||
+        !Number.isInteger(body.expectedVersion) ||
+        body.expectedVersion < 1
+      )
+        return HttpResponse.json(
+          { message: 'Invalid claim request' },
+          { status: 400 },
+        );
+
+      await delay(mock.claimLatencyMs);
+      const result = claimMockReviewCase(body.expectedVersion, scenario);
+      if (result.status === 'success')
+        return HttpResponse.json(result.details);
+      return HttpResponse.json(
+        { code: result.code, current: result.details },
+        { status: 409 },
+      );
+    },
+  ),
+  http.get('/api/review-cases/:caseId', async ({ params, request }) => {
     const caseId = String(params.caseId ?? '');
-    const mock = readMockReviewCaseDetails();
+    const mock = readMockReviewCaseDetails(claimScenarioFromRequest(request));
     await delay(mock.latencyMs);
     if (caseId !== mock.canonical.case.id)
       return HttpResponse.json(
